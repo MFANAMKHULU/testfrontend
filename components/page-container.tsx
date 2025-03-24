@@ -10,19 +10,19 @@ interface PageContainerProps {
 
 export function PageContainer({ children, className }: PageContainerProps) {
   return (
-    <div className="min-h-screen relative">
+    <>
       {/* Animated background with dark blue gradient matching the theme */}
       <motion.div
-        className="fixed inset-0 bg-gradient-to-br from-[#0f1424] via-[#121836] to-[#1a1e32] z-0"
+        className="fixed inset-0 bg-gradient-to-br from-[#0f1424] via-[#121836] to-[#1a1e32] -z-10"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       />
       
       {/* Content with proper spacing */}
-      <div className={cn("relative z-10 pt-32 pb-16", className)}>
+      <div className={cn("relative pt-32 pb-16", className)}>
         {children}
       </div>
-    </div>
+    </>
   )
 } 

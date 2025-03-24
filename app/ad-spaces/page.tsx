@@ -205,189 +205,191 @@ export default function AdSpacesPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <PageContainer>
-        <AnimatedContent>
-          <div className="container">
-            <div className="max-w-2xl mx-auto text-center">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Browse Ad Spaces</h1>
-              <p className="text-gray-300 mb-8">
-                Find the perfect advertising platform for your next campaign
-              </p>
-              <div className="flex gap-2">
-                <AnimatedInput
-                  placeholder="Search ad spaces..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="max-w-lg"
-                />
-                <AnimatedButton onClick={applyFilters} variant="primary-gradient" hoverScale={1.02} sweep={true}>
-                  Search
-                </AnimatedButton>
-                <AnimatedButton
-                  variant="ghost-primary"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="gap-2"
-                  shimmer={true}
-                >
-                  <Filter className="h-4 w-4" />
-                  Filters
-                </AnimatedButton>
-              </div>
-            </div>
-          </div>
-        </AnimatedContent>
-
-        <div className="container py-8">
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{
-              opacity: showFilters ? 1 : 0,
-              height: showFilters ? "auto" : 0,
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            {showFilters && (
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle>Filters</CardTitle>
-                  <CardDescription>Refine your search with these filters</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Category</label>
-                      <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Platform Type</label>
-                      <Select value={selectedType} onValueChange={setSelectedType}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {platformTypes.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex justify-between">
-                        <label className="text-sm font-medium">Price Range</label>
-                        <span className="text-sm text-muted-foreground">
-                          ${priceRange[0]} - ${priceRange[1]}
-                        </span>
-                      </div>
-                      <Slider
-                        defaultValue={[0, 5000]}
-                        max={5000}
-                        step={100}
-                        value={priceRange}
-                        onValueChange={setPriceRange}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between">
+      <div className="flex-1">
+        <PageContainer>
+          <AnimatedContent>
+            <div className="container">
+              <div className="max-w-2xl mx-auto text-center">
+                <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Browse Ad Spaces</h1>
+                <p className="text-gray-300 mb-8">
+                  Find the perfect advertising platform for your next campaign
+                </p>
+                <div className="flex gap-2">
+                  <AnimatedInput
+                    placeholder="Search ad spaces..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="max-w-lg"
+                  />
+                  <AnimatedButton onClick={applyFilters} variant="primary-gradient" hoverScale={1.02} sweep={true}>
+                    Search
+                  </AnimatedButton>
                   <AnimatedButton
                     variant="ghost-primary"
-                    className="border-primary/30 hover:border-primary/60"
-                    onClick={() => {
-                      setSearchQuery("")
-                      setSelectedCategory("All Categories")
-                      setSelectedType("All Types")
-                      setPriceRange([0, 5000])
-                      setFilteredSpaces(adSpaces)
-                    }}
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="gap-2"
                     shimmer={true}
                   >
-                    Reset Filters
+                    <Filter className="h-4 w-4" />
+                    Filters
                   </AnimatedButton>
-                  <AnimatedButton onClick={applyFilters} variant="primary-gradient" sweep={true}>
-                    Apply Filters
-                  </AnimatedButton>
-                </CardFooter>
-              </Card>
-            )}
-          </motion.div>
+                </div>
+              </div>
+            </div>
+          </AnimatedContent>
 
-          <AnimatedList className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.05}>
-            {filteredSpaces.map((space) => (
-              <AnimatedCard key={space.id}>
-                <Card className="overflow-hidden">
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <div className="bg-primary/10 p-2 rounded-lg">
-                        <space.icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <Badge variant="outline">{space.type}</Badge>
-                    </div>
-                    <CardTitle className="mt-4 text-xl">{space.title}</CardTitle>
-                    <CardDescription className="line-clamp-2 h-10">{space.description}</CardDescription>
+          <div className="container py-8">
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{
+                opacity: showFilters ? 1 : 0,
+                height: showFilters ? "auto" : 0,
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              {showFilters && (
+                <Card className="mb-8">
+                  <CardHeader>
+                    <CardTitle>Filters</CardTitle>
+                    <CardDescription>Refine your search with these filters</CardDescription>
                   </CardHeader>
-                  <CardContent className="pb-3">
-                    <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                      {Object.entries(space.metrics).map(([key, value]) => (
-                        <div key={key} className="flex flex-col">
-                          <span className="text-muted-foreground capitalize">{key}</span>
-                          <span className="font-medium">{value}</span>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Category</label>
+                        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Platform Type</label>
+                        <Select value={selectedType} onValueChange={setSelectedType}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {platformTypes.map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="flex justify-between">
+                          <label className="text-sm font-medium">Price Range</label>
+                          <span className="text-sm text-muted-foreground">
+                            ${priceRange[0]} - ${priceRange[1]}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {space.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
+                        <Slider
+                          defaultValue={[0, 5000]}
+                          max={5000}
+                          step={100}
+                          value={priceRange}
+                          onValueChange={setPriceRange}
+                        />
+                      </div>
                     </div>
                   </CardContent>
-                  <CardFooter className="flex justify-between items-center border-t pt-4">
-                    <div>
-                      <p className="text-sm font-medium">${space.price}</p>
-                      <p className="text-xs text-muted-foreground">{space.priceModel}</p>
-                    </div>
-                    <Link href={`/ad-spaces/${space.id}`}>
-                      <AnimatedButton
-                        size="sm"
-                        className="gap-1"
-                        variant="ghost-primary"
-                        hoverScale={1.05}
-                        shimmer={true}
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        View Details
-                      </AnimatedButton>
-                    </Link>
+                  <CardFooter className="flex justify-between">
+                    <AnimatedButton
+                      variant="ghost-primary"
+                      className="border-primary/30 hover:border-primary/60"
+                      onClick={() => {
+                        setSearchQuery("")
+                        setSelectedCategory("All Categories")
+                        setSelectedType("All Types")
+                        setPriceRange([0, 5000])
+                        setFilteredSpaces(adSpaces)
+                      }}
+                      shimmer={true}
+                    >
+                      Reset Filters
+                    </AnimatedButton>
+                    <AnimatedButton onClick={applyFilters} variant="primary-gradient" sweep={true}>
+                      Apply Filters
+                    </AnimatedButton>
                   </CardFooter>
                 </Card>
-              </AnimatedCard>
-            ))}
-          </AnimatedList>
+              )}
+            </motion.div>
 
-          {filteredSpaces.length === 0 && (
-            <AnimatedContent className="text-center py-12">
-              <h3 className="text-lg font-medium mb-2">No ad spaces found</h3>
-              <p className="text-muted-foreground">Try adjusting your filters or search query</p>
-            </AnimatedContent>
-          )}
-        </div>
-      </PageContainer>
+            <AnimatedList className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" staggerDelay={0.05}>
+              {filteredSpaces.map((space) => (
+                <AnimatedCard key={space.id}>
+                  <Card className="overflow-hidden">
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start">
+                        <div className="bg-primary/10 p-2 rounded-lg">
+                          <space.icon className="h-5 w-5 text-primary" />
+                        </div>
+                        <Badge variant="outline">{space.type}</Badge>
+                      </div>
+                      <CardTitle className="mt-4 text-xl">{space.title}</CardTitle>
+                      <CardDescription className="line-clamp-2 h-10">{space.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-3">
+                      <div className="grid grid-cols-2 gap-2 text-sm mb-4">
+                        {Object.entries(space.metrics).map(([key, value]) => (
+                          <div key={key} className="flex flex-col">
+                            <span className="text-muted-foreground capitalize">{key}</span>
+                            <span className="font-medium">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {space.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between items-center border-t pt-4">
+                      <div>
+                        <p className="text-sm font-medium">${space.price}</p>
+                        <p className="text-xs text-muted-foreground">{space.priceModel}</p>
+                      </div>
+                      <Link href={`/ad-spaces/${space.id}`}>
+                        <AnimatedButton
+                          size="sm"
+                          className="gap-1"
+                          variant="ghost-primary"
+                          hoverScale={1.05}
+                          shimmer={true}
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View Details
+                        </AnimatedButton>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                </AnimatedCard>
+              ))}
+            </AnimatedList>
+
+            {filteredSpaces.length === 0 && (
+              <AnimatedContent className="text-center py-12">
+                <h3 className="text-lg font-medium mb-2">No ad spaces found</h3>
+                <p className="text-muted-foreground">Try adjusting your filters or search query</p>
+              </AnimatedContent>
+            )}
+          </div>
+        </PageContainer>
+      </div>
       <Footer />
     </div>
   )
