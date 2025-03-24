@@ -4,7 +4,6 @@ import { FeaturedSpaces } from "@/components/featured-spaces"
 import { Testimonials } from "@/components/testimonials"
 import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
-import { InteractiveBackground } from "@/components/interactive-background"
 import { AnimatedContent } from "@/components/animated-content"
 
 export default function Home() {
@@ -12,7 +11,6 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <div className="max-w-[1920px] mx-auto overflow-hidden relative">
-        <InteractiveBackground />
         <HeroSection />
 
         <AnimatedContent>

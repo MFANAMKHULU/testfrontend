@@ -12,6 +12,8 @@ import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { PageContainer } from "@/components/page-container"
+import { AnimatedContent } from "@/components/animated-content"
 
 // Sample data for influencers
 const influencers = [
@@ -243,31 +245,18 @@ export default function InfluencersPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
-        <div className="bg-muted/50 py-12">
+      <PageContainer>
+        <AnimatedContent>
           <div className="container">
             <div className="max-w-2xl mx-auto text-center">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">Browse Influencers</h1>
-              <p className="text-muted-foreground mb-8">
-                Connect with top influencers to promote your products or services
+              <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Influencer Marketing</h1>
+              <p className="text-gray-300 mb-8">
+                Connect with top influencers to amplify your brand's reach
               </p>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Search influencers..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="max-w-lg"
-                />
-                <Button onClick={applyFilters}>Search</Button>
-                <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filters
-                </Button>
-              </div>
             </div>
           </div>
-        </div>
-
+        </AnimatedContent>
+        
         <div className="container py-8">
           {showFilters && (
             <Card className="mb-8">
@@ -438,7 +427,7 @@ export default function InfluencersPage() {
             </div>
           )}
         </div>
-      </main>
+      </PageContainer>
       <Footer />
     </div>
   )

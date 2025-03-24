@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -5,12 +7,25 @@ import { Check, HelpCircle, X } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { PageContainer } from "@/components/page-container"
+import { AnimatedContent } from "@/components/animated-content"
 
 export default function PricingPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <PageContainer>
+        <AnimatedContent>
+          <div className="container">
+            <div className="max-w-2xl mx-auto text-center">
+              <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Pricing Plans</h1>
+              <p className="text-gray-300 mb-8">
+                Choose the perfect plan for your advertising needs
+              </p>
+            </div>
+          </div>
+        </AnimatedContent>
+        
         <section className="py-20 bg-muted/50">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center">
@@ -519,7 +534,7 @@ export default function PricingPage() {
             </div>
           </div>
         </section>
-      </main>
+      </PageContainer>
       <Footer />
     </div>
   )

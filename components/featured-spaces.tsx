@@ -8,6 +8,7 @@ import { AnimatedCard } from "@/components/animated-card"
 import { ParallaxSection } from "@/components/parallax-section"
 import { AnimatedContent } from "@/components/animated-content"
 import { AnimatedButton } from "@/components/animated-button"
+import { motion } from "framer-motion"
 
 // Sample data for featured ad spaces
 const featuredSpaces = [
@@ -79,89 +80,100 @@ const featuredSpaces = [
 
 export function FeaturedSpaces() {
   return (
-    <section className="section-padding relative">
-      <ParallaxSection direction="up" speed={0.1} className="mb-16">
-        <div className="text-center">
-          <AnimatedContent>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Ad Spaces</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover premium advertising opportunities across various platforms
-            </p>
-          </AnimatedContent>
-        </div>
-      </ParallaxSection>
+    <section className="section-padding relative py-20">
+      {/* Background gradient to match the theme */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-[#0f1424] via-[#121836] to-[#1a1e32] z-0"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      />
 
-      <div className="container-narrow">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredSpaces.map((space, index) => (
-            <AnimatedContent key={space.id} delay={index * 0.1}>
-              <AnimatedCard intensity={10}>
-                <Card className="overflow-hidden h-full border border-border/50 bg-card/80 backdrop-blur-sm">
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start">
-                      <div className="bg-primary/10 p-2 rounded-lg">
-                        <space.icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <Badge variant="outline">{space.type}</Badge>
-                    </div>
-                    <CardTitle className="mt-4 text-xl">{space.title}</CardTitle>
-                    <CardDescription className="line-clamp-2 h-10">{space.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-3">
-                    <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-                      {Object.entries(space.metrics).map(([key, value]) => (
-                        <div key={key} className="flex flex-col">
-                          <span className="text-muted-foreground capitalize">{key}</span>
-                          <span className="font-medium">{value}</span>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {space.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between items-center border-t pt-4 mt-auto">
-                    <div>
-                      <p className="text-sm font-medium">{space.price}</p>
-                      <p className="text-xs text-muted-foreground">{space.priceModel}</p>
-                    </div>
-                    <Link href={`/ad-spaces/${space.id}`}>
-                      <AnimatedButton
-                        size="sm"
-                        className="gap-1"
-                        variant="ghost-primary"
-                        hoverScale={1.05}
-                        shimmer={true}
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        View Details
-                      </AnimatedButton>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              </AnimatedCard>
+      <div className="relative z-10">
+        <ParallaxSection direction="up" speed={0.1} className="mb-16">
+          <div className="text-center">
+            <AnimatedContent>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Featured Ad Spaces</h2>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                Discover premium advertising opportunities across various platforms
+              </p>
             </AnimatedContent>
-          ))}
-        </div>
+          </div>
+        </ParallaxSection>
 
-        <div className="text-center mt-12">
-          <AnimatedContent delay={0.4}>
-            <Link href="/ad-spaces">
-              <AnimatedButton
-                variant="ghost-primary"
-                size="lg"
-                className="relative overflow-hidden"
-                hoverScale={1.03}
-                shimmer={true}
-              >
-                <span className="relative z-10">View All Ad Spaces</span>
-              </AnimatedButton>
-            </Link>
-          </AnimatedContent>
+        <div className="container-narrow">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredSpaces.map((space, index) => (
+              <AnimatedContent key={space.id} delay={index * 0.1}>
+                <AnimatedCard intensity={10}>
+                  <Card className="overflow-hidden h-full border border-[#2a2e45] bg-[#1a1e32]/80 backdrop-blur-sm">
+                    <CardHeader className="pb-3">
+                      <div className="flex justify-between items-start">
+                        <div className="bg-[#9575ff]/20 p-2 rounded-lg">
+                          <space.icon className="h-5 w-5 text-[#9575ff]" />
+                        </div>
+                        <Badge variant="outline" className="border-[#2a2e45] text-gray-300">{space.type}</Badge>
+                      </div>
+                      <CardTitle className="mt-4 text-xl text-white">{space.title}</CardTitle>
+                      <CardDescription className="line-clamp-2 h-10 text-gray-400">{space.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="pb-3">
+                      <div className="grid grid-cols-2 gap-2 text-sm mb-4">
+                        {Object.entries(space.metrics).map(([key, value]) => (
+                          <div key={key} className="flex flex-col">
+                            <span className="text-gray-400 capitalize">{key}</span>
+                            <span className="font-medium text-white">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {space.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs bg-[#2a2e45] text-gray-300 hover:bg-[#353a58]">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between items-center border-t border-[#2a2e45] pt-4 mt-auto">
+                      <div>
+                        <p className="text-sm font-medium text-white">{space.price}</p>
+                        <p className="text-xs text-gray-400">{space.priceModel}</p>
+                      </div>
+                      <Link href={`/ad-spaces/${space.id}`}>
+                        <AnimatedButton
+                          size="sm"
+                          className="gap-1 text-[#9575ff] hover:text-white hover:bg-[#9575ff]/20"
+                          variant="ghost"
+                          hoverScale={1.05}
+                          shimmer={true}
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          View Details
+                        </AnimatedButton>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                </AnimatedCard>
+              </AnimatedContent>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <AnimatedContent delay={0.4}>
+              <Link href="/ad-spaces">
+                <AnimatedButton
+                  variant="outline"
+                  size="lg"
+                  className="relative overflow-hidden bg-transparent border-[#9575ff] text-[#9575ff] hover:text-white hover:bg-[#9575ff]/20"
+                  hoverScale={1.03}
+                  shimmer={true}
+                >
+                  <span className="relative z-10">View All Ad Spaces</span>
+                </AnimatedButton>
+              </Link>
+            </AnimatedContent>
+          </div>
         </div>
       </div>
     </section>

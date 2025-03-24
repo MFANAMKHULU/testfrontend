@@ -2,11 +2,13 @@
 
 import * as React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { ModeToggle } from "@/components/mode-toggle"
-import { Logo } from "@/components/logo"
 import { AnimatedButton } from "@/components/animated-button"
+import { SignInModal } from "@/components/auth/sign-in-modal"
+import { SignUpModal } from "@/components/auth/sign-up-modal"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -48,6 +50,26 @@ const routes = [
 export function Navbar() {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = React.useState(false)
+  const [colorIndex, setColorIndex] = React.useState(0)
+  const [isSignInOpen, setIsSignInOpen] = React.useState(false)
+  const [isSignUpOpen, setIsSignUpOpen] = React.useState(false)
+
+  // Logo colors for the border
+  const logoColors = [
+    "#6B54FA", // Purple
+    "#FA6565", // Pink/Red
+    "#F9CA56", // Yellow/Gold
+    "#53E2D2"  // Teal
+  ]
+
+  // Color rotation effect
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setColorIndex((prevIndex) => (prevIndex + 1) % logoColors.length)
+    }, 2000)
+    
+    return () => clearInterval(interval)
+  }, [])
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -58,135 +80,178 @@ export function Navbar() {
   }, [])
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        isScrolled ? "bg-background/80 backdrop-blur-md shadow-md py-2" : "bg-transparent py-4",
-      )}
-    >
-      <div className="container flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <Logo className="h-8 w-8" linkToHome={false} />
-            <Link href="/">
-              <span className="font-bold text-lg hidden sm:inline-block">All Things Ads</span>
-            </Link>
-          </div>
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              {routes.map((route) => (
-                <NavigationMenuItem key={route.href}>
-                  <Link href={route.href} legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "text-sm font-medium transition-colors",
-                        route.active(pathname) ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      {route.label}
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-              ))}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger
-                  className={cn(
-                    "text-sm font-medium transition-colors",
-                    pathname === "/about" || pathname === "/contact" || pathname === "/help" || pathname === "/faq"
-                      ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground",
-                  )}
+    <>
+      <header
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled ? "bg-[#0a0d1e]/90 backdrop-blur-md border-b border-[#2a2e45]/30 py-2" : "bg-transparent py-4",
+        )}
+      >
+        <div className="container flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <Link href="/" className="flex items-center gap-4">
+                <div 
+                  className="relative flex items-center justify-center"
+                  style={{ 
+                    border: `2px solid ${logoColors[colorIndex]}`,
+                    transition: "border-color 0.5s ease-in-out",
+                    borderRadius: "50%",
+                    width: "44px",
+                    height: "44px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center"
+                  }}
                 >
-                  Company
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/about"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">About</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Learn about our mission and team
-                          </p>
-                        </Link>
+                  <Image 
+                    src="/images/Picture1.png" 
+                    alt="Logo" 
+                    width={36} 
+                    height={36}
+                    className="overflow-hidden" 
+                    priority
+                    style={{ 
+                      borderRadius: "50%",
+                      objectFit: "contain"
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col text-xs font-medium text-white space-y-0.5">
+                  <span>All</span>
+                  <span>Things</span>
+                  <span>Advertising</span>
+                </div>
+              </Link>
+            </div>
+            <NavigationMenu className="hidden md:flex">
+              <NavigationMenuList>
+                {routes.map((route) => (
+                  <NavigationMenuItem key={route.href}>
+                    <Link href={route.href} legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "text-sm font-medium transition-colors bg-transparent hover:bg-[#2a2e45]/50",
+                          route.active(pathname) ? "text-[#9575ff]" : "text-white hover:text-[#9575ff]",
+                        )}
+                      >
+                        {route.label}
                       </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/contact"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Contact</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Get in touch with our team
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/help"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">Help Center</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Find answers to common questions
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href="/faq"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">FAQ</div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Frequently asked questions
-                          </p>
-                        </Link>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/login" className="hidden sm:block">
+                    </Link>
+                  </NavigationMenuItem>
+                ))}
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger
+                    className={cn(
+                      "text-sm font-medium transition-colors bg-transparent hover:bg-[#2a2e45]/50",
+                      pathname === "/about" || pathname === "/contact" || pathname === "/help" || pathname === "/faq"
+                        ? "text-[#9575ff]"
+                        : "text-white hover:text-[#9575ff]",
+                    )}
+                  >
+                    Company
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2 bg-[#0f1424] border border-[#2a2e45]">
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/about"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#2a2e45] hover:text-white focus:bg-[#2a2e45] focus:text-white"
+                          >
+                            <div className="text-sm font-medium leading-none text-white">About</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-gray-400">
+                              Learn about our mission and team
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/contact"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#2a2e45] hover:text-white focus:bg-[#2a2e45] focus:text-white"
+                          >
+                            <div className="text-sm font-medium leading-none text-white">Contact</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-gray-400">
+                              Get in touch with our team
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/help"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#2a2e45] hover:text-white focus:bg-[#2a2e45] focus:text-white"
+                          >
+                            <div className="text-sm font-medium leading-none text-white">Help Center</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-gray-400">
+                              Find answers to common questions
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                      <li>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href="/faq"
+                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#2a2e45] hover:text-white focus:bg-[#2a2e45] focus:text-white"
+                          >
+                            <div className="text-sm font-medium leading-none text-white">FAQ</div>
+                            <p className="line-clamp-2 text-sm leading-snug text-gray-400">
+                              Frequently asked questions
+                            </p>
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div className="flex items-center gap-2">
             <AnimatedButton
               variant="ghost-primary"
-              className="relative overflow-hidden"
+              className="relative overflow-hidden text-white hover:text-[#9575ff]"
               hoverScale={1.02}
               glowOnHover={true}
               shimmer={true}
+              onClick={() => setIsSignInOpen(true)}
             >
-              Log in
+              Sign In
             </AnimatedButton>
-          </Link>
-          <Link href="/signup">
             <AnimatedButton
               variant="primary-gradient"
-              className="relative overflow-hidden"
+              className="relative overflow-hidden bg-[#9575ff] hover:bg-[#8a63ff] text-white"
               hoverScale={1.02}
               glowOnHover={true}
               sweep={true}
+              onClick={() => setIsSignUpOpen(true)}
             >
-              Sign up
+              Get Started
             </AnimatedButton>
-          </Link>
-          <ModeToggle />
+            <ModeToggle className="hidden" />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <SignInModal
+        isOpen={isSignInOpen}
+        onClose={() => setIsSignInOpen(false)}
+        onSignUp={() => {
+          setIsSignInOpen(false)
+          setIsSignUpOpen(true)
+        }}
+      />
+
+      <SignUpModal
+        isOpen={isSignUpOpen}
+        onClose={() => setIsSignUpOpen(false)}
+      />
+    </>
   )
 }
 

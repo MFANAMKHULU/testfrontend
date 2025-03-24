@@ -34,21 +34,21 @@ export function InteractiveBackground() {
     const { width, height } = containerRef.current.getBoundingClientRect()
     setDimensions({ width, height })
 
-    const isDark = theme === "dark"
+    // Colors from the image (purple dots)
     const particleColors = [
-      isDark ? "rgba(93, 63, 211, 0.4)" : "rgba(20, 0, 71, 0.2)",
-      isDark ? "rgba(120, 87, 255, 0.3)" : "rgba(40, 10, 100, 0.15)",
-      isDark ? "rgba(150, 120, 255, 0.25)" : "rgba(60, 20, 130, 0.1)",
-      isDark ? "rgba(180, 160, 255, 0.2)" : "rgba(80, 30, 160, 0.05)",
+      "rgba(149, 117, 255, 0.8)",
+      "rgba(132, 104, 224, 0.7)",
+      "rgba(120, 95, 205, 0.6)",
+      "rgba(108, 85, 185, 0.5)",
     ]
 
-    const newParticles = Array.from({ length: 30 }, (_, i) => ({
+    const newParticles = Array.from({ length: 40 }, (_, i) => ({
       id: i,
       x: Math.random() * width,
       y: Math.random() * height,
-      size: Math.random() * 8 + 2,
+      size: Math.random() * 4 + 2,
       color: particleColors[Math.floor(Math.random() * particleColors.length)],
-      opacity: Math.random() * 0.5 + 0.1,
+      opacity: Math.random() * 0.5 + 0.3,
       speed: Math.random() * 0.2 + 0.1,
     }))
 
@@ -87,8 +87,8 @@ export function InteractiveBackground() {
 
   return (
     <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5" />
+      {/* Solid dark navy background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0d1e] via-[#0f1424] to-[#121836]" />
 
       {/* Particles */}
       {particles.map((particle) => (
@@ -113,14 +113,13 @@ export function InteractiveBackground() {
             width: particle.size,
             height: particle.size,
             backgroundColor: particle.color,
-            filter: "blur(1px)",
           }}
         />
       ))}
 
-      {/* Mouse follower gradient */}
+      {/* Mouse follower gradient - purple glow */}
       <motion.div
-        className="absolute rounded-full bg-primary/10 dark:bg-primary/20 blur-3xl"
+        className="absolute rounded-full bg-[#9575ff]/20 blur-3xl"
         style={{
           width: 300,
           height: 300,
@@ -128,9 +127,6 @@ export function InteractiveBackground() {
           y: useTransform(cursorYSpring, (y) => y - 150),
         }}
       />
-
-      {/* Mesh gradient */}
-      <div className="absolute inset-0 bg-[url('/images/mesh-gradient.png')] bg-cover opacity-10 mix-blend-overlay" />
     </div>
   )
 }

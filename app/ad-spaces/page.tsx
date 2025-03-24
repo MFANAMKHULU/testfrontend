@@ -15,6 +15,7 @@ import { AnimatedCard } from "@/components/animated-card"
 import { AnimatedButton } from "@/components/animated-button"
 import { AnimatedInput } from "@/components/animated-input"
 import { motion } from "framer-motion"
+import { PageContainer } from "@/components/page-container"
 
 // Sample data for ad spaces
 const adSpaces = [
@@ -204,35 +205,33 @@ export default function AdSpacesPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
+      <PageContainer>
         <AnimatedContent>
-          <div className="bg-muted/50 py-12">
-            <div className="container">
-              <div className="max-w-2xl mx-auto text-center">
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">Browse Ad Spaces</h1>
-                <p className="text-muted-foreground mb-8">
-                  Find the perfect advertising platform for your next campaign
-                </p>
-                <div className="flex gap-2">
-                  <AnimatedInput
-                    placeholder="Search ad spaces..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="max-w-lg"
-                  />
-                  <AnimatedButton onClick={applyFilters} variant="primary-gradient" hoverScale={1.02} sweep={true}>
-                    Search
-                  </AnimatedButton>
-                  <AnimatedButton
-                    variant="ghost-primary"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="gap-2"
-                    shimmer={true}
-                  >
-                    <Filter className="h-4 w-4" />
-                    Filters
-                  </AnimatedButton>
-                </div>
+          <div className="container">
+            <div className="max-w-2xl mx-auto text-center">
+              <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Browse Ad Spaces</h1>
+              <p className="text-gray-300 mb-8">
+                Find the perfect advertising platform for your next campaign
+              </p>
+              <div className="flex gap-2">
+                <AnimatedInput
+                  placeholder="Search ad spaces..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="max-w-lg"
+                />
+                <AnimatedButton onClick={applyFilters} variant="primary-gradient" hoverScale={1.02} sweep={true}>
+                  Search
+                </AnimatedButton>
+                <AnimatedButton
+                  variant="ghost-primary"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="gap-2"
+                  shimmer={true}
+                >
+                  <Filter className="h-4 w-4" />
+                  Filters
+                </AnimatedButton>
               </div>
             </div>
           </div>
@@ -388,7 +387,7 @@ export default function AdSpacesPage() {
             </AnimatedContent>
           )}
         </div>
-      </main>
+      </PageContainer>
       <Footer />
     </div>
   )

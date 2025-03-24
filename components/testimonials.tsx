@@ -7,6 +7,7 @@ import { ParallaxSection } from "@/components/parallax-section"
 import { AnimatedCard } from "@/components/animated-card"
 import { AnimatedContent } from "@/components/animated-content"
 import { AnimatedList } from "@/components/animated-list"
+import { motion } from "framer-motion"
 
 const testimonials = [
   {
@@ -38,19 +39,23 @@ const testimonials = [
 export function Testimonials() {
   return (
     <section className="py-20 relative">
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-muted/50 z-0">
-        <div className="absolute inset-0 bg-[url('/images/mesh-gradient.png')] bg-cover opacity-5 mix-blend-overlay" />
-      </div>
+      {/* Dark blue gradient background matching the theme */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-[#0f1424] via-[#121836] to-[#1a1e32] z-0"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      />
 
       <div className="container-narrow relative z-10">
         <ParallaxSection direction="up" speed={0.2} className="mb-16">
           <div className="text-center">
             <AnimatedContent>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Users Say</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">What Our Users Say</h2>
             </AnimatedContent>
             <AnimatedContent delay={0.1}>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
                 Join thousands of satisfied advertisers and ad buyers on our platform
               </p>
             </AnimatedContent>
@@ -60,24 +65,24 @@ export function Testimonials() {
         <AnimatedList className="grid md:grid-cols-3 gap-8" staggerDelay={0.15}>
           {testimonials.map((testimonial, index) => (
             <AnimatedCard key={index} intensity={5}>
-              <Card className="bg-background/80 backdrop-blur-sm h-full border border-border/50">
+              <Card className="bg-[#1a1e32]/80 backdrop-blur-sm h-full border border-[#2a2e45]">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
-                    <Avatar className="h-12 w-12 border-2 border-primary/10">
+                    <Avatar className="h-12 w-12 border-2 border-[#9575ff]/30">
                       <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-[#9575ff]/20 text-white">{testimonial.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <Quote className="h-6 w-6 text-primary/40" />
+                    <Quote className="h-6 w-6 text-[#9575ff]/60" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base mb-4 text-foreground/80 italic">
+                  <CardDescription className="text-base mb-4 text-gray-300 italic">
                     "{testimonial.content}"
                   </CardDescription>
-                  <CardTitle className="text-base">{testimonial.name}</CardTitle>
+                  <CardTitle className="text-base text-white">{testimonial.name}</CardTitle>
                   <div className="flex items-center justify-between mt-1">
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                    <p className="text-sm text-gray-400">{testimonial.role}</p>
+                    <span className="text-xs bg-[#9575ff]/20 text-[#9575ff] px-2 py-1 rounded-full">
                       {testimonial.type}
                     </span>
                   </div>
