@@ -13,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRight, Search } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { MarketingIllustrations } from "@/components/marketing-illustrations"
 import { CustomCursor } from "@/components/custom-cursor"
 
 export default function Home() {
@@ -21,17 +20,15 @@ export default function Home() {
     <main className="min-h-screen">
       <CustomCursor />
       <Navbar />
-      <div className="max-w-[1920px] mx-auto overflow-hidden relative">
+      <div className="max-w-[1920px] mx-auto overflow-hidden relative pt-8">
         <PageContainer>
-          <MarketingIllustrations />
-          
           <AnimatedContent>
-            <div className="container-narrow relative z-10 py-20 md:py-32">
+            <div className="container-narrow relative z-10 py-4 md:py-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="max-w-4xl mx-auto text-center mb-12"
+                className="max-w-4xl mx-auto text-center mb-8"
               >
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
                   The Revolutionary Digital{" "}

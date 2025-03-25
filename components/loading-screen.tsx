@@ -1,39 +1,102 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Logo } from "@/components/logo"
+import { useEffect, useState } from "react"
 
 export function LoadingScreen() {
+  const [mounted, setMounted] = useState(false)
+  const colors = ["#9575ff", "#8a63ff", "#7d52ff", "#6e3fff"]
+  const [colorIndex, setColorIndex] = useState(0)
+
+  useEffect(() => {
+    setMounted(true)
+    const interval = setInterval(() => {
+      setColorIndex((prev) => (prev + 1) % colors.length)
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  if (!mounted) return null
+
   return (
-    <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0f1424]">
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{
           duration: 0.5,
-          ease: [0.22, 1, 0.36, 1],
+          ease: "easeOut",
         }}
-        className="text-center"
+        className="relative mb-8 flex items-center"
       >
-        <Logo className="mx-auto mb-8" />
-
-        <div className="relative h-2 w-48 bg-muted overflow-hidden rounded-full">
+        {/* Logo */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="relative h-16 w-16"
+        >
+          <svg
+            viewBox="0 0 100 100"
+            className="h-full w-full"
+            style={{
+              filter: `drop-shadow(0 0 10px ${colors[colorIndex]})`
+            }}
+          >
+            <motion.path
+              d="M50 10 L90 90 L10 90 Z"
+              fill="none"
+              stroke={colors[colorIndex]}
+              strokeWidth="4"
+              animate={{
+                strokeDasharray: ["0,1000", "1000,0"],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          </svg>
           <motion.div
-            className="absolute top-0 left-0 h-full bg-primary rounded-full"
-            initial={{ width: "0%" }}
+            className="absolute inset-0"
             animate={{
-              width: "100%",
-              transition: { duration: 1.5, ease: "easeInOut" },
+              background: [
+                `radial-gradient(circle, ${colors[colorIndex]}20 0%, transparent 70%)`,
+                `radial-gradient(circle, ${colors[colorIndex]}40 0%, transparent 70%)`,
+                `radial-gradient(circle, ${colors[colorIndex]}20 0%, transparent 70%)`,
+              ],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
             }}
           />
-        </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center"
+      >
+        <motion.p
+          animate={{ color: colors[colorIndex] }}
+          transition={{ duration: 0.5 }}
+          className="text-lg font-medium"
+        >
+          Loading...
+        </motion.p>
+      </motion.div>
+    </div>
   )
 }
 

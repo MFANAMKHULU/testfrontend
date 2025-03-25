@@ -210,13 +210,13 @@ export default function AdSpacesPage() {
           <AnimatedContent>
             <div className="container">
               <div className="max-w-2xl mx-auto text-center">
-                <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Browse Ad Spaces</h1>
+                <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Browse Ad Platforms</h1>
                 <p className="text-gray-300 mb-8">
                   Find the perfect advertising platform for your next campaign
                 </p>
-                <div className="flex gap-2">
+                <div className="flex justify-center gap-2">
                   <AnimatedInput
-                    placeholder="Search ad spaces..."
+                    placeholder="Search ad platforms..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="max-w-lg"
@@ -246,6 +246,7 @@ export default function AdSpacesPage() {
                 height: showFilters ? "auto" : 0,
               }}
               transition={{ duration: 0.3 }}
+              className="flex justify-center"
             >
               {showFilters && (
                 <Card className="mb-8">
@@ -350,19 +351,8 @@ export default function AdSpacesPage() {
                           </div>
                         ))}
                       </div>
-                      <div className="flex flex-wrap gap-1">
-                        {space.tags.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
                     </CardContent>
-                    <CardFooter className="flex justify-between items-center border-t pt-4">
-                      <div>
-                        <p className="text-sm font-medium">${space.price}</p>
-                        <p className="text-xs text-muted-foreground">{space.priceModel}</p>
-                      </div>
+                    <CardFooter className="flex justify-end items-center border-t pt-4">
                       <Link href={`/ad-spaces/${space.id}`}>
                         <AnimatedButton
                           size="sm"

@@ -1,28 +1,19 @@
 import "@/app/globals.css"
 import { Inter } from "next/font/google"
 import { Metadata } from "next"
+import { ChatBot } from "@/components/chat-bot"
+import { LoadingProvider } from "@/providers/loading-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "All Things Ads",
-  description: "Find and manage ad spaces, connect with advertisers, and grow your revenue",
+  title: "Adsy - AI-Powered Advertising Platform",
+  description: "Connect with influencers, manage campaigns, and optimize your advertising with AI.",
   icons: {
-    icon: [
-      {
-        url: "/images/Favicon2.png",
-        sizes: "32x32",
-        type: "image/png"
-      },
-      {
-        url: "/images/Favicon2.png",
-        sizes: "16x16",
-        type: "image/png"
-      }
-    ],
-    shortcut: "/images/Favicon2.png",
-    apple: "/images/Favicon2.png",
-  },
+    icon: '/images/Favicon2.png',
+    shortcut: '/images/Favicon2.png',
+    apple: '/images/Favicon2.png',
+  }
 }
 
 export default function RootLayout({
@@ -35,7 +26,12 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <LoadingProvider>
+          {children}
+        </LoadingProvider>
+        <ChatBot />
+      </body>
     </html>
   )
 }
