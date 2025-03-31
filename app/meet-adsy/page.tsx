@@ -42,7 +42,7 @@ const features = [
 
 export default function MeetAdsyPage() {
   return (
-    <main className="min-h-screen bg-[#0f1424]">
+    <main className="min-h-screen vv bg-[#0f1424]">
       <Navbar />
       <PageContainer>
         <AnimatedContent>

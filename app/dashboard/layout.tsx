@@ -7,7 +7,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-[#1E0B33]">
+    <div className="min-h-screen bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] z-0">
       <div className="h-screen flex overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-y-auto">

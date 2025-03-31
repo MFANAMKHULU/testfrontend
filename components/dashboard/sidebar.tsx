@@ -98,7 +98,7 @@ export function Sidebar() {
   const routes = advertiserRoutes
 
   return (
-    <div className="hidden md:flex flex-col border-r border-purple-800/50 w-64 h-screen bg-purple-950/30">
+    <div className="hidden md:flex flex-col border-r border-purple-800/50 w-64 h-screen bg-gradient-to-br from-[#140047] via-[#140047] to-[#32147f] z-0">
       <div className="p-4 border-b border-purple-800/50">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10">

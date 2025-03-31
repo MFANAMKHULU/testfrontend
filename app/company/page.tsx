@@ -173,7 +173,7 @@ export default function CompanyDashboardPage() {
       if (revenueSort === 'desc') return b.revenue - a.revenue
       return 0
     })
-
+ 
   return (
     <div className="flex h-screen bg-[#1B0B36]">
       <CompanySidebar />

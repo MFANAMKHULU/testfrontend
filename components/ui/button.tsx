@@ -22,9 +22,9 @@ const buttonVariants = cva(
         "ghost-primary":
           "border border-primary/20 bg-background/50 text-primary hover:border-primary/50 hover:bg-primary/5 hover:shadow-sm",
         "primary-gradient":
-          "bg-gradient-to-r from-primary-600 to-secondary-500 text-white shadow-md hover:shadow-lg hover:bg-gradient-to-r hover:from-primary-500 hover:to-secondary-400",
+          "bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md hover:shadow-lg hover:bg-gradient-to-r hover:from-primary-400 hover:to-secondary-400",
         "accent-gradient":
-          "bg-gradient-to-r from-accent-400 to-accent-600 text-accent-foreground shadow-md hover:shadow-lg",
+          "bg-gradient-to-r from-accent-500 to-accent-700 text-accent-foreground shadow-md hover:shadow-lg",
       },
       size: {
         default: "h-10 px-4 py-2",

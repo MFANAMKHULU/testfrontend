@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { motion } from "framer-motion"
+// import { motion } from "framer-motion"
 import { 
   LayoutDashboard, 
   Users, 
@@ -98,7 +98,7 @@ export function DashboardLayout({
   const links = [...commonLinks, ...roleSpecificLinks[role]]
 
   return (
-    <div className="min-h-screen bg-[#0f1424] text-white">
+    <div className="min-h-screen game bg-[#0f1424] text-white">
       {/* Mobile Sidebar Toggle */}
       <button
         className="fixed top-4 left-4 z-50 p-2 bg-[#1a1e32] rounded-lg md:hidden"
@@ -110,7 +110,7 @@ export function DashboardLayout({
       {/* Sidebar */}
       <aside
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-[#1a1e32] transform transition-transform duration-200 ease-in-out md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 w-64 bg-[#140047] transform transition-transform duration-200 ease-in-out md:translate-x-0",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >

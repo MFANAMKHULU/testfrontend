@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -185,13 +185,13 @@ export const AnimatedPosts = ({
               onClick={handlePrev}
               className="h-10 w-10 rounded-full bg-gray-800/50 flex items-center justify-center group/button"
             >
-              <IconArrowLeft className="h-5 w-5 text-white group-hover/button:rotate-12 transition-transform duration-300" />
+              <ArrowLeft className="h-5 w-5 text-white group-hover/button:rotate-12 transition-transform duration-300" />
             </button>
             <button
               onClick={handleNext}
               className="h-10 w-10 rounded-full bg-gray-800/50 flex items-center justify-center group/button"
             >
-              <IconArrowRight className="h-5 w-5 text-white group-hover/button:-rotate-12 transition-transform duration-300" />
+              <ArrowRight className="h-5 w-5 text-white group-hover/button:-rotate-12 transition-transform duration-300" />
             </button>
           </div>
         </div>
