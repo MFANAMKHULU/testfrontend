@@ -15,6 +15,8 @@ import {
   Users,
   Mail,
   ChevronDown,
+  Megaphone,
+  Activity,
 } from "lucide-react"
 import Link from "next/link"
 import { AnimatedBorderCard } from "@/components/ui/animated-border-card"
@@ -140,33 +142,47 @@ export default function DashboardPage() {
         <p className="text-gray-400">Welcome back! Here's an overview of your advertising spaces.</p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.title}
-            variants={cardVariants}
-            initial="hidden"
-            animate="visible"
-            custom={stats.length - 1 - index}
-            style={{
-              position: 'relative',
-              transformOrigin: 'center'
-            }}
-          >
-            <AnimatedBorderCard>
-              <div className="p-4">
-                <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <h3 className="text-sm font-medium text-gray-200">{stat.title}</h3>
-                  <stat.icon className="h-4 w-4 text-gray-400" />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-white">{stat.value}</div>
-                  <p className="text-xs text-gray-400">{stat.change}</p>
-                </div>
-              </div>
-            </AnimatedBorderCard>
-          </motion.div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="bg-gradient-to-br from-blue-950/30 to-blue-900/10 border-blue-500/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Total Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-blue-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">$45,231.89</div>
+              <p className="text-xs text-gray-400">+20.1% from last month</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-blue-950/30 to-blue-900/10 border-blue-500/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Active Campaigns</CardTitle>
+              <Megaphone className="h-4 w-4 text-blue-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">12</div>
+              <p className="text-xs text-gray-400">+2 new this month</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-blue-950/30 to-blue-900/10 border-blue-500/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Total Influencers</CardTitle>
+              <Users className="h-4 w-4 text-blue-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">48</div>
+              <p className="text-xs text-gray-400">+5 new this month</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-blue-950/30 to-blue-900/10 border-blue-500/20">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-400">Engagement Rate</CardTitle>
+              <Activity className="h-4 w-4 text-blue-400" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-white">4.2%</div>
+              <p className="text-xs text-gray-400">+0.3% from last month</p>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-4">

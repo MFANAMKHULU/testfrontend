@@ -25,7 +25,8 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
-  type LucideIcon
+  type LucideIcon,
+  Clock
 } from "lucide-react"
 import Link from "next/link"
 import { AnimatedBorderCard } from "@/components/ui/animated-border-card"
@@ -59,6 +60,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { AnimatedPosts } from "@/app/components/ui/animated-testimonials"
+import { AnimatedText } from "@/components/ui/animated-text"
+import { TypingText } from "@/app/components/ui/typing-text"
 
 const cardVariants = {
   hidden: {
@@ -245,36 +248,55 @@ const upcomingCampaigns = [
 
 const recentActivity = [
   {
-    user: "Jessica Smith",
-    action: "commented on your post",
-    time: "2 hours ago"
+    id: "1",
+    text: "Jessica Smith commented on your post",
+    time: "2 hours ago",
+    comment: "Your content is amazing! Keep up the great work!",
+    type: "comment"
   },
   {
-    user: "Michael Brown",
-    action: "liked your story",
-    time: "5 hours ago"
+    id: "2",
+    text: "Michael Brown liked your story",
+    time: "5 hours ago",
+    type: "like"
   },
   {
-    user: "StyleCo",
-    action: "mentioned you in a comment",
-    time: "1 day ago"
+    id: "3",
+    text: "StyleCo mentioned you in a comment",
+    time: "1 day ago",
+    comment: "Perfect collaboration!",
+    type: "comment"
   },
   {
-    user: "Emma Wilson",
-    action: "shared your reel",
-    time: "1 day ago"
+    id: "4",
+    text: "New follower: Fashion Weekly",
+    time: "2 days ago",
+    type: "follow"
   },
   {
-    user: "FitLife",
-    action: "sent you a campaign request",
-    time: "2 days ago"
-    
+    id: "5",
+    text: "Your post reached 1K likes",
+    time: "3 days ago",
+    type: "milestone"
   },
   {
-    user: "David Chen",
-    action: "subscribed to your channel",
-    time: "2 days ago"
-  }
+    id: "6",
+    text: "Campaign milestone achieved",
+    time: "4 days ago",
+    type: "campaign"
+  },
+  {
+    id: "7",
+    text: "Monthly analytics report ready",
+    time: "5 days ago",
+    type: "report"
+  },
+  {
+    id: "8",
+    text: "Content calendar updated",
+    time: "1 week ago",
+    type: "update"
+  },
 ]
 
 const followerGrowthData = [
@@ -572,22 +594,17 @@ export default function InfluencerDashboardPage() {
             <Card className="lg:col-span-2 bg-gradient-to-br from-blue-950/30 to-blue-900/10 border-blue-500/20 h-fit">
               <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest interactions with your content</CardDescription>
+                <CardDescription>Your latest interactions and updates</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentActivity.slice(0, 3).map((activity, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                      <div className="h-8 w-8 rounded-full bg-gray-800/50 flex items-center justify-center">
-                        <Users className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm">
-                          <span className="font-medium text-white">{activity.user}</span>
-                          {" "}
-                          <span className="text-gray-400">{activity.action}</span>
-                        </p>
-                        <p className="text-xs text-gray-500">{activity.time}</p>
+                  {recentActivity.slice(0, 3).map((activity) => (
+                    <div key={activity.id} className="relative">
+                      <div className="flex items-center gap-2 p-2 rounded-lg">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-300">{activity.text}</p>
+                          <p className="text-xs text-gray-500">{activity.time}</p>
+                        </div>
                       </div>
                     </div>
                   ))}
