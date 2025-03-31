@@ -132,21 +132,23 @@ const TestimonialCard = memo(({ testimonial, isActive = false }: { testimonial: 
   <Card 
     className={`
       ${isActive ? 'w-[400px] scale-110 shadow-lg z-10' : 'w-[300px]'} 
-      bg-black/80 backdrop-blur-sm
-      border-[#2a2e45] hover:border-[#3a3e55] 
+      bg-gradient-to-br from-[#140047]/80 via-[#1a0066]/80 to-[#200080]/80 
+      border-[#4f2da3]/50 hover:border-[#6b3dcc]/50 
       shadow-xl shadow-black/10
       transition-all duration-300
+      backdrop-blur-sm
+      hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]
     `}
   >
     <CardContent className="p-6">
       <div className="flex items-center gap-4 mb-4">
-        <Avatar className="h-12 w-12 border-2 border-[#9575ff]/30">
+        <Avatar className="h-12 w-12 border-2 border-[#4f2da3]/30">
           <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-          <AvatarFallback className="bg-[#9575ff]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+          <AvatarFallback className="bg-[#4f2da3]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
         </Avatar>
         <div>
           <h4 className="font-semibold text-white">{testimonial.name}</h4>
-          <p className="text-sm text-gray-400">{testimonial.role} at {testimonial.company}</p>
+          <p className="text-sm text-gray-300">{testimonial.role} at {testimonial.company}</p>
         </div>
       </div>
       <div className="flex items-center gap-1 mb-3">
@@ -166,12 +168,12 @@ const TestimonialCard = memo(({ testimonial, isActive = false }: { testimonial: 
         ))}
       </div>
       <p className="text-sm text-gray-300 leading-relaxed mb-4">{testimonial.content}</p>
-      <div className="pt-4 border-t border-[#2a2e45]">
+      <div className="pt-4 border-t border-[#4f2da3]/50">
         <span className={`text-xs px-3 py-1.5 rounded-full font-medium ${
           testimonial.category === "Advertiser" 
             ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
             : testimonial.category === "Ad Buyer"
-            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+            ? "bg-[#4f2da3]/10 text-[#a98eff] border border-[#4f2da3]/20"
             : "bg-purple-500/10 text-purple-400 border border-purple-500/20"
         }`}>
           {testimonial.category}

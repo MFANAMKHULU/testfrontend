@@ -15,7 +15,7 @@ export function HowItWorks() {
     <section ref={containerRef} className="py-20 relative">
       {/* Animated background with dark blue gradient matching the theme */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#0f1424] via-[#121836] to-[#1a1e32] z-0"
+        className="absolute inset-0 bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] z-0"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
