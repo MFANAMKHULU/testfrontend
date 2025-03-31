@@ -68,6 +68,7 @@ type Testimonial = {
   content: string
   avatar: string
   category: "Advertiser" | "Ad Buyer" | "Affiliate"
+  rating: number
 }
 
 const testimonials: Testimonial[] = [
@@ -78,7 +79,8 @@ const testimonials: Testimonial[] = [
     company: "TechCorp",
     content: "This platform has transformed how we manage our ad campaigns. The ROI has been incredible!",
     avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-1",
-    category: "Advertiser"
+    category: "Advertiser",
+    rating: 5
   },
   {
     id: "2",
@@ -87,7 +89,8 @@ const testimonials: Testimonial[] = [
     company: "StartupX",
     content: "The targeting capabilities are unmatched. We've seen a 300% increase in conversion rates.",
     avatar: "https://source.unsplash.com/featured/150x150?man-portrait-1",
-    category: "Ad Buyer"
+    category: "Ad Buyer",
+    rating: 4
   },
   {
     id: "3",
@@ -96,7 +99,8 @@ const testimonials: Testimonial[] = [
     company: "AdVentures",
     content: "Finally, a platform that understands both advertisers and content creators. Brilliant!",
     avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-2",
-    category: "Affiliate"
+    category: "Affiliate",
+    rating: 5
   },
   {
     id: "4",
@@ -105,7 +109,8 @@ const testimonials: Testimonial[] = [
     company: "ScaleUp Inc",
     content: "The analytics and insights have helped us optimize our campaigns like never before.",
     avatar: "https://source.unsplash.com/featured/150x150?man-portrait-2",
-    category: "Ad Buyer"
+    category: "Ad Buyer",
+    rating: 5
   },
   {
     id: "5",
@@ -114,7 +119,8 @@ const testimonials: Testimonial[] = [
     company: "Creative Studios",
     content: "As a content creator, this platform has made monetization seamless and profitable.",
     avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-3",
-    category: "Affiliate"
+    category: "Affiliate",
+    rating: 4
   }
 ]
 
@@ -126,30 +132,48 @@ const TestimonialCard = memo(({ testimonial, isActive = false }: { testimonial: 
   <Card 
     className={`
       ${isActive ? 'w-[400px] scale-110 shadow-lg z-10' : 'w-[300px]'} 
-      bg-gradient-to-br from-[#1a1e32] via-[#1c2038] to-[#232742] 
-      border-[#2a2e45] hover:border-[#3a3e55] 
+      bg-gradient-to-br from-[#140047]/80 via-[#1a0066]/80 to-[#200080]/80 
+      border-[#4f2da3]/50 hover:border-[#6b3dcc]/50 
       shadow-xl shadow-black/10
       transition-all duration-300
+      backdrop-blur-sm
+      hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]
     `}
   >
     <CardContent className="p-6">
       <div className="flex items-center gap-4 mb-4">
-        <Avatar className="h-12 w-12 border-2 border-[#9575ff]/30">
+        <Avatar className="h-12 w-12 border-2 border-[#4f2da3]/30">
           <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-          <AvatarFallback className="bg-[#9575ff]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+          <AvatarFallback className="bg-[#4f2da3]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
         </Avatar>
         <div>
           <h4 className="font-semibold text-white">{testimonial.name}</h4>
-          <p className="text-sm text-gray-400">{testimonial.role} at {testimonial.company}</p>
+          <p className="text-sm text-gray-300">{testimonial.role} at {testimonial.company}</p>
         </div>
       </div>
+      <div className="flex items-center gap-1 mb-3">
+        {[...Array(5)].map((_, i) => (
+          <svg
+            key={i}
+            className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-500" : "text-gray-600"}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 15.585l-7.07 3.707 1.35-7.87-5.72-5.573 7.91-1.149L10 0l3.53 7.7 7.91 1.149-5.72 5.573 1.35 7.87L10 15.585z"
+              clipRule="evenodd"
+            />
+          </svg>
+        ))}
+      </div>
       <p className="text-sm text-gray-300 leading-relaxed mb-4">{testimonial.content}</p>
-      <div className="pt-4 border-t border-[#2a2e45]">
+      <div className="pt-4 border-t border-[#4f2da3]/50">
         <span className={`text-xs px-3 py-1.5 rounded-full font-medium ${
           testimonial.category === "Advertiser" 
             ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
             : testimonial.category === "Ad Buyer"
-            ? "bg-green-500/10 text-green-400 border border-green-500/20"
+            ? "bg-[#4f2da3]/10 text-[#a98eff] border border-[#4f2da3]/20"
             : "bg-purple-500/10 text-purple-400 border border-purple-500/20"
         }`}>
           {testimonial.category}

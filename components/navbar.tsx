@@ -84,46 +84,46 @@ export function Navbar() {
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled ? "bg-[#0a0d1e]/90 backdrop-blur-md border-b border-[#2a2e45]/30 py-2" : "bg-transparent py-4",
+          isScrolled ? "bg-[#140047]/90 backdrop-blur-md border-b border-[#4f2da3]/30 py-2" : "bg-transparent py-4",
         )}
       >
-        <div className="container flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-4">
-                <div 
-                  className="relative flex items-center justify-center"
+        <div className="container flex items-center">
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-4">
+              <div 
+                className="relative flex items-center justify-center"
+                style={{ 
+                  border: `2px solid ${logoColors[colorIndex]}`,
+                  transition: "border-color 0.5s ease-in-out",
+                  borderRadius: "50%",
+                  width: "44px",
+                  height: "44px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Image 
+                  src="/images/Picture1.png" 
+                  alt="Logo" 
+                  width={36} 
+                  height={36}
+                  className="overflow-hidden" 
+                  priority
                   style={{ 
-                    border: `2px solid ${logoColors[colorIndex]}`,
-                    transition: "border-color 0.5s ease-in-out",
                     borderRadius: "50%",
-                    width: "44px",
-                    height: "44px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
+                    objectFit: "contain"
                   }}
-                >
-                  <Image 
-                    src="/images/Picture1.png" 
-                    alt="Logo" 
-                    width={36} 
-                    height={36}
-                    className="overflow-hidden" 
-                    priority
-                    style={{ 
-                      borderRadius: "50%",
-                      objectFit: "contain"
-                    }}
-                  />
-                </div>
-                <div className="flex flex-col text-xs font-medium text-white space-y-0.5">
-                  <span>All</span>
-                  <span>Things</span>
-                  <span>Advertising</span>
-                </div>
-              </Link>
-            </div>
+                />
+              </div>
+              <div className="flex flex-col text-xs font-bold text-white space-y-0.5">
+                <span>All</span>
+                <span>Things</span>
+                <span>Advertising</span>
+              </div>
+            </Link>
+          </div>
+          <div className="flex-1 flex justify-center">
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
                 {routes.map((route) => (

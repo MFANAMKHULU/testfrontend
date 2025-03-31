@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
-export function ModeToggle() {
+export function ModeToggle({ className }: { className?: string }) {
   const { setTheme, theme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -19,7 +20,7 @@ export function ModeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="relative h-9 w-9">
+      <Button variant="ghost" size="icon" className={cn("relative h-9 w-9", className)}>
         <div className="h-[1.2rem] w-[1.2rem]" />
       </Button>
     )
@@ -28,7 +29,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative h-9 w-9">
+        <Button variant="ghost" size="icon" className={cn("relative h-9 w-9", className)}>
           <motion.div
             className="absolute inset-0 flex items-center justify-center"
             animate={{ opacity: theme === "light" ? 1 : 0 }}

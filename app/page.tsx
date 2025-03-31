@@ -13,7 +13,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRight, Search } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { MarketingIllustrations } from "@/components/marketing-illustrations"
 import { CustomCursor } from "@/components/custom-cursor"
 
 export default function Home() {
@@ -21,17 +20,15 @@ export default function Home() {
     <main className="min-h-screen">
       <CustomCursor />
       <Navbar />
-      <div className="max-w-[1920px] mx-auto overflow-hidden relative">
+      <div className="max-w-[1920px] mx-auto overflow-hidden relative pt-8">
         <PageContainer>
-          <MarketingIllustrations />
-          
           <AnimatedContent>
-            <div className="container-narrow relative z-10 py-20 md:py-32">
+            <div className="container-narrow relative z-10 py-4 md:py-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="max-w-4xl mx-auto text-center mb-12"
+                className="max-w-4xl mx-auto text-center mb-8"
               >
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 text-white">
                   The Revolutionary Digital{" "}
@@ -57,13 +54,13 @@ export default function Home() {
                       value="find-spaces"
                       className="data-[state=active]:bg-[#9575ff] data-[state=active]:text-white text-gray-300"
                     >
-                      Find Ad Spaces
+                      Find Ad Platforms
                     </TabsTrigger>
                     <TabsTrigger
                       value="list-space"
                       className="data-[state=active]:bg-[#9575ff] data-[state=active]:text-white text-gray-300"
                     >
-                      List Your Space
+                      List Your Services
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="find-spaces">
@@ -104,11 +101,11 @@ export default function Home() {
                       </Link>
                       <span>•</span>
                       <Link href="/ad-spaces?category=newsletters" className="hover:text-[#9575ff] transition-colors">
-                        Content Creation
+                        Billboards
                       </Link>
                       <span>•</span>
                       <Link href="/ad-spaces?category=podcasts" className="hover:text-[#9575ff] transition-colors">
-                        Affiliate Programs
+                        Radio Ads
                       </Link>
                     </div>
                   </TabsContent>
@@ -133,12 +130,12 @@ export default function Home() {
                 </Tabs>
               </motion.div>
 
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="flex flex-wrap justify-center gap-8"
-              >
+                >
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -178,7 +175,7 @@ export default function Home() {
                     <p className="text-gray-400">Generated</p>
                   </div>
                 </motion.div>
-              </motion.div>
+              </motion.div> */}
             </div>
           </AnimatedContent>
         </PageContainer>
