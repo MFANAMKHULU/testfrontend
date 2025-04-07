@@ -1,102 +1,165 @@
 "use client"
 
+import React, { useEffect, useState } from "react"
+import Image from "next/image"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 
-export function LoadingScreen() {
-  const [mounted, setMounted] = useState(false)
-  const colors = ["#9575ff", "#8a63ff", "#7d52ff", "#6e3fff"]
-  const [colorIndex, setColorIndex] = useState(0)
+interface LoadingScreenProps {
+  className?: string
+}
+
+export function LoadingScreen({ className }: LoadingScreenProps) {
+  const [showLoader, setShowLoader] = useState(true)
 
   useEffect(() => {
-    setMounted(true)
-    const interval = setInterval(() => {
-      setColorIndex((prev) => (prev + 1) % colors.length)
-    }, 500)
+    // Hide loader after 2 seconds
+    const timer = setTimeout(() => {
+      setShowLoader(false)
+    }, 2000)
 
-    return () => clearInterval(interval)
+    return () => clearTimeout(timer)
   }, [])
 
-  if (!mounted) return null
+  // Disappear animation
+  const containerVariants = {
+    visible: { opacity: 1 },
+    hidden: { 
+      opacity: 0,
+      transition: { 
+        duration: 0.5,
+        ease: "easeInOut" 
+      }
+    }
+  }
+
+  // Pulse animation for the glow effect
+  const glowVariants = {
+    initial: { opacity: 0.5, scale: 1 },
+    animate: {
+      opacity: [0.5, 0.8, 0.5],
+      scale: [1, 1.1, 1],
+      transition: {
+        duration: 2,
+        ease: "easeInOut",
+        repeat: Infinity,
+      }
+    }
+  }
+
+  // Rotation animation for the loader
+  const rotateVariants = {
+    initial: { rotate: 0 },
+    animate: {
+      rotate: 360,
+      transition: {
+        duration: 4,
+        ease: "linear", 
+        repeat: Infinity
+      }
+    }
+  }
+
+  // Additional particles that float around the loader
+  const particleVariants = {
+    initial: { opacity: 0, scale: 0 },
+    animate: {
+      opacity: [0, 1, 0],
+      scale: [0, 1, 0],
+      transition: {
+        duration: 2,
+        ease: "easeInOut",
+        repeat: Infinity,
+        repeatType: "mirror",
+        repeatDelay: Math.random()
+      }
+    }
+  }
+
+  if (!showLoader) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0f1424]">
       <motion.div
-        initial={{ scale: 0.5, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{
-          duration: 0.5,
-          ease: "easeOut",
-        }}
-        className="relative mb-8 flex items-center"
-      >
-        {/* Logo */}
+      className={cn(
+        "fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md",
+        className
+      )}
+      initial="visible"
+      animate={showLoader ? "visible" : "hidden"}
+      variants={containerVariants}
+    >
+      <div className="relative flex flex-col items-center">
+        {/* Glow effect */}
         <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="relative h-16 w-16"
+          className="absolute w-40 h-40 bg-[#9575ff]/20 rounded-full blur-2xl"
+          variants={glowVariants}
+          initial="initial"
+          animate="animate"
+        />
+        
+        {/* Loader image with rotation */}
+        <motion.div
+          className="relative z-10"
+          variants={rotateVariants}
+          initial="initial"
+          animate="animate"
         >
-          <svg
-            viewBox="0 0 100 100"
-            className="h-full w-full"
-            style={{
-              filter: `drop-shadow(0 0 10px ${colors[colorIndex]})`
-            }}
-          >
-            <motion.path
-              d="M50 10 L90 90 L10 90 Z"
-              fill="none"
-              stroke={colors[colorIndex]}
-              strokeWidth="4"
-              animate={{
-                strokeDasharray: ["0,1000", "1000,0"],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-          </svg>
-          <motion.div
-            className="absolute inset-0"
-            animate={{
-              background: [
-                `radial-gradient(circle, ${colors[colorIndex]}20 0%, transparent 70%)`,
-                `radial-gradient(circle, ${colors[colorIndex]}40 0%, transparent 70%)`,
-                `radial-gradient(circle, ${colors[colorIndex]}20 0%, transparent 70%)`,
-              ],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+          <Image
+            src="/images/loader.png"
+            alt="Loading"
+            width={120}
+            height={120}
+            className="object-contain"
+            priority
           />
         </motion.div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-center"
-      >
-        <motion.p
-          animate={{ color: colors[colorIndex] }}
-          transition={{ duration: 0.5 }}
-          className="text-lg font-medium"
+        
+        {/* Floating particles */}
+        <div className="absolute inset-0 w-full h-full">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-[#9575ff] rounded-full"
+            style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                filter: "blur(1px)"
+              }}
+              variants={particleVariants}
+              initial="initial"
+              animate="animate"
+              transition={{
+                delay: i * 0.2,
+                duration: 2 + Math.random() * 2
+              }}
+            />
+          ))}
+        </div>
+        
+          <motion.div
+          className="mt-6 text-white font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: 1,
+            transition: { delay: 0.5, duration: 0.5 }
+          }}
         >
-          Loading...
-        </motion.p>
+          <motion.span
+            className="inline-block"
+            animate={{
+              opacity: [1, 0.5, 1],
+              transition: {
+                duration: 1.5,
+              repeat: Infinity,
+                repeatType: "mirror"
+              }
+            }}
+          >
+            Loading...
+          </motion.span>
+        </motion.div>
+      </div>
       </motion.div>
-    </div>
   )
 }
 

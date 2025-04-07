@@ -1,16 +1,14 @@
-"use client"
-
-import { cn } from "@/lib/utils"
-import React from "react"
+import { cn } from "@/lib/utils";
+import React from "react";
 
 export const Meteors = ({
   number,
   className,
 }: {
-  number?: number
-  className?: string
+  number?: number;
+  className?: string;
 }) => {
-  const meteors = new Array(number || 20).fill(true)
+  const meteors = new Array(number || 20).fill(true);
   return (
     <>
       {meteors.map((el, idx) => (
@@ -30,5 +28,5 @@ export const Meteors = ({
         ></span>
       ))}
     </>
-  )
-} 
+  );
+}; 

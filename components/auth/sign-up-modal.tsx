@@ -6,6 +6,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { AnimatedButton } from "@/components/animated-button"
 import { AnimatedInput } from "@/components/animated-input"
+import { createClient } from '@supabase/supabase-js'
+import { VerificationModal } from "./verification-modal"
+import { LoadingLogo } from "@/components/loading-logo"
 
 interface SignUpModalProps {
   isOpen: boolean
@@ -29,8 +32,17 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     // Individual fields
     fullName: "",
     role: "" as string,
+    userType: "" as "advertiser" | "influencer" | "affiliate" | "user",
   })
   const [colorIndex, setColorIndex] = React.useState(0)
+  const [showVerification, setShowVerification] = React.useState(false)
+  const [error, setError] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   // Logo colors for the border
   const logoColors = [
@@ -57,10 +69,74 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle sign up logic here
-    console.log("Sign up with:", { accountType, formData })
+    setError("")
+    setLoading(true)
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
+    try {
+      // Sign up with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+
+      if (authError) throw authError
+
+      // Create user profile in the users_account table
+      const { error: profileError } = await supabase
+        .from('users_account')
+        .insert({
+          id: authData.user?.id,
+          email: formData.email,
+          full_name: accountType === "individual" ? formData.fullName : formData.contactPerson,
+          user_type: accountType === "individual" ? formData.userType : "company",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          verified: false,
+          bio: null,
+          website: accountType === "company" ? formData.website : null,
+          social_links: {},
+          settings: {
+            company_info: accountType === "company" ? {
+              company_name: formData.companyName,
+              registration_number: formData.registrationNumber,
+              vat_number: formData.vatNumber,
+              industry: formData.industry,
+              phone_number: formData.phoneNumber
+            } : null
+          }
+        })
+
+      if (profileError) throw profileError
+
+      // Show verification modal
+      setShowVerification(true)
+    } catch (error: any) {
+      setError(error.message || "An error occurred during sign up")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerificationComplete = () => {
+    setShowVerification(false)
+    onClose()
+  }
+
+  const handleSkipVerification = () => {
+    setShowVerification(false)
+    onClose()
+    // You can add additional logic here to show the login modal
   }
 
   const industries = [
@@ -75,6 +151,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
   ]
 
   return (
+    <>
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -98,6 +175,9 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
             <div className="bg-[#1a1e32] border border-[#2a2e45] rounded-xl shadow-lg p-6">
               {/* Logo */}
               <div className="flex justify-center mb-6">
+                  {loading ? (
+                    <LoadingLogo size={44} />
+                  ) : (
                 <div 
                   className="relative flex items-center justify-center"
                   style={{ 
@@ -124,6 +204,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                     }}
                   />
                 </div>
+                  )}
               </div>
 
               <div className="flex justify-between items-center mb-6">
@@ -172,6 +253,7 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                         }
                         className="w-full px-4 py-2 bg-[#1a1f2e] border border-[#2a2e45] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#9575ff] focus:border-transparent"
                         placeholder="Enter your full name"
+                          required
                       />
                     </div>
                     <div className="space-y-4">
@@ -179,23 +261,23 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div
                           className={`relative flex items-center p-2 rounded-lg border-2 cursor-pointer transition-all h-10 ${
-                            formData.role === 'advertiser'
-                              ? 'border-primary bg-primary/10'
-                              : 'border-[#2a2e45] bg-[#0f1424] hover:border-primary/50'
-                          }`}
-                          onClick={() => setFormData({ ...formData, role: 'advertiser' })}
+                              formData.userType === 'advertiser'
+                                ? 'border-[#9575ff] bg-[#9575ff]/10'
+                                : 'border-[#2a2e45] bg-[#0f1424] hover:border-[#9575ff]/50'
+                            }`}
+                            onClick={() => setFormData({ ...formData, userType: 'advertiser' })}
                         >
                           <div className="flex items-center space-x-2">
                             <div
                               className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                formData.role === 'advertiser' ? 'border-primary' : 'border-[#2a2e45]'
+                                  formData.userType === 'advertiser' ? 'border-[#9575ff]' : 'border-[#2a2e45]'
                               }`}
                             >
-                              {formData.role === 'advertiser' && (
-                                <div className="w-2 h-2 rounded-full bg-primary" />
+                                {formData.userType === 'advertiser' && (
+                                  <div className="w-2 h-2 rounded-full bg-[#9575ff]" />
                               )}
                             </div>
-                            <span className={`font-medium text-sm ${formData.role === 'advertiser' ? 'text-primary' : 'text-white'}`}>
+                              <span className={`font-medium text-sm ${formData.userType === 'advertiser' ? 'text-[#9575ff]' : 'text-white'}`}>
                               Advertiser
                             </span>
                           </div>
@@ -203,23 +285,23 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
 
                         <div
                           className={`relative flex items-center p-2 rounded-lg border-2 cursor-pointer transition-all h-10 ${
-                            formData.role === 'influencer'
-                              ? 'border-primary bg-primary/10'
-                              : 'border-[#2a2e45] bg-[#0f1424] hover:border-primary/50'
-                          }`}
-                          onClick={() => setFormData({ ...formData, role: 'influencer' })}
+                              formData.userType === 'influencer'
+                                ? 'border-[#9575ff] bg-[#9575ff]/10'
+                                : 'border-[#2a2e45] bg-[#0f1424] hover:border-[#9575ff]/50'
+                            }`}
+                            onClick={() => setFormData({ ...formData, userType: 'influencer' })}
                         >
                           <div className="flex items-center space-x-2">
                             <div
                               className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                formData.role === 'influencer' ? 'border-primary' : 'border-[#2a2e45]'
+                                  formData.userType === 'influencer' ? 'border-[#9575ff]' : 'border-[#2a2e45]'
                               }`}
                             >
-                              {formData.role === 'influencer' && (
-                                <div className="w-2 h-2 rounded-full bg-primary" />
+                                {formData.userType === 'influencer' && (
+                                  <div className="w-2 h-2 rounded-full bg-[#9575ff]" />
                               )}
                             </div>
-                            <span className={`font-medium text-sm ${formData.role === 'influencer' ? 'text-primary' : 'text-white'}`}>
+                              <span className={`font-medium text-sm ${formData.userType === 'influencer' ? 'text-[#9575ff]' : 'text-white'}`}>
                               Influencer
                             </span>
                           </div>
@@ -227,24 +309,48 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
 
                         <div
                           className={`relative flex items-center p-2 rounded-lg border-2 cursor-pointer transition-all h-10 ${
-                            formData.role === 'affiliate'
-                              ? 'border-primary bg-primary/10'
-                              : 'border-[#2a2e45] bg-[#0f1424] hover:border-primary/50'
-                          }`}
-                          onClick={() => setFormData({ ...formData, role: 'affiliate' })}
+                              formData.userType === 'affiliate'
+                                ? 'border-[#9575ff] bg-[#9575ff]/10'
+                                : 'border-[#2a2e45] bg-[#0f1424] hover:border-[#9575ff]/50'
+                            }`}
+                            onClick={() => setFormData({ ...formData, userType: 'affiliate' })}
                         >
                           <div className="flex items-center space-x-2">
                             <div
                               className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                                formData.role === 'affiliate' ? 'border-primary' : 'border-[#2a2e45]'
+                                  formData.userType === 'affiliate' ? 'border-[#9575ff]' : 'border-[#2a2e45]'
                               }`}
                             >
-                              {formData.role === 'affiliate' && (
-                                <div className="w-2 h-2 rounded-full bg-primary" />
+                                {formData.userType === 'affiliate' && (
+                                  <div className="w-2 h-2 rounded-full bg-[#9575ff]" />
                               )}
+                              </div>
+                              <span className={`font-medium text-sm ${formData.userType === 'affiliate' ? 'text-[#9575ff]' : 'text-white'}`}>
+                                Affiliate
+                              </span>
                             </div>
-                            <span className={`font-medium text-sm ${formData.role === 'affiliate' ? 'text-primary' : 'text-white'}`}>
-                              Affiliate
+                          </div>
+
+                          <div
+                            className={`relative flex items-center p-2 rounded-lg border-2 cursor-pointer transition-all h-10 ${
+                              formData.userType === 'user'
+                                ? 'border-[#9575ff] bg-[#9575ff]/10'
+                                : 'border-[#2a2e45] bg-[#0f1424] hover:border-[#9575ff]/50'
+                            }`}
+                            onClick={() => setFormData({ ...formData, userType: 'user' })}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <div
+                                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                  formData.userType === 'user' ? 'border-[#9575ff]' : 'border-[#2a2e45]'
+                                }`}
+                              >
+                                {formData.userType === 'user' && (
+                                  <div className="w-2 h-2 rounded-full bg-[#9575ff]" />
+                                )}
+                              </div>
+                              <span className={`font-medium text-sm ${formData.userType === 'user' ? 'text-[#9575ff]' : 'text-white'}`}>
+                                User
                             </span>
                           </div>
                         </div>
@@ -409,6 +515,10 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                   </div>
                 </div>
 
+                  {error && (
+                    <p className="text-sm text-red-500">{error}</p>
+                  )}
+
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -435,8 +545,9 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
                   hoverScale={1.02}
                   glowOnHover={true}
                   sweep={true}
+                    disabled={loading}
                 >
-                  Create Account
+                    {loading ? "Creating Account..." : "Create Account"}
                 </AnimatedButton>
               </form>
 
@@ -457,5 +568,14 @@ export function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
         </div>
       )}
     </AnimatePresence>
+
+      <VerificationModal
+        isOpen={showVerification}
+        onClose={() => setShowVerification(false)}
+        email={formData.email}
+        onVerificationComplete={handleVerificationComplete}
+        onSkip={handleSkipVerification}
+      />
+    </>
   )
 } 

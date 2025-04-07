@@ -1,64 +1,62 @@
 "use client"
 
-import { motion } from "framer-motion"
+import React from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { ParallaxSection } from "@/components/parallax-section"
 import { AnimatedContent } from "@/components/animated-content"
 import { TestimonialCarousel } from "@/components/ui/testimonial-carousel"
 
 export function Testimonials() {
+  const { scrollYProgress } = useScroll()
+  
+  // Animation for the title to drop from top
+  const titleY = useTransform(scrollYProgress, [0, 0.2], [-100, 0])
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1])
+  const titleScale = useTransform(scrollYProgress, [0, 0.2], [0.8, 1])
+
   return (
-    <section className="py-20 relative">
-      {/* Dark blue gradient background matching the theme */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] z-0"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      />
-
-      {/* Floating stars */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+    <section className="relative py-20 overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#140047] via-[#1a0066] to-[#200080] opacity-90" />
+      
+      {/* Parallax section */}
+      <div className="relative z-10">
           <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-[#9575ff] rounded-full"
-            initial={{
-              x: Math.random() * 100 + '%',
-              y: Math.random() * 100 + '%',
-              opacity: 0,
-              scale: 0
+          initial={{ opacity: 0, y: -100 }}
+          whileInView={{ 
+            opacity: 1, 
+            y: 0,
+            transition: {
+              type: "spring",
+              stiffness: 30,
+              damping: 10,
+              mass: 1
+            }
+          }}
+          viewport={{ once: true }}
+          className="absolute inset-0 flex items-center justify-center"
+        >
+          <motion.h2 
+            className="text-5xl md:text-6xl font-bold mb-4 text-yellow-400"
+            initial={{ scale: 0.5, y: -300 }}
+            whileInView={{ 
+              scale: 1,
+              y: -200,
+              transition: {
+                type: "spring",
+                stiffness: 100,
+                damping: 10,
+                mass: 1
+              }
             }}
-            animate={{
-              opacity: [0, 1, 0],
-              scale: [0, 1.5, 0],
-              y: [0, -50, 0]
-            }}
-            transition={{
-              duration: Math.random() * 3 + 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </div>
+            viewport={{ once: true }}
+          >
+            What Our Users Say
+          </motion.h2>
+        </motion.div>
 
-      <div className="container-narrow relative z-10">
-        <ParallaxSection direction="up" speed={0.2} className="mb-16">
-          <div className="text-center">
-            <AnimatedContent>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">What Our Users Say</h2>
-            </AnimatedContent>
-            <AnimatedContent delay={0.1}>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Join thousands of satisfied advertisers and ad buyers on our platform
-              </p>
-            </AnimatedContent>
-          </div>
-        </ParallaxSection>
-
-        <div className="min-h-[500px] flex flex-col justify-center">
+        {/* Testimonial carousel */}
+        <div className="relative z-10">
           <TestimonialCarousel />
         </div>
       </div>

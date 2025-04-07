@@ -68,7 +68,6 @@ type Testimonial = {
   content: string
   avatar: string
   category: "Advertiser" | "Ad Buyer" | "Affiliate"
-  rating: number
 }
 
 const testimonials: Testimonial[] = [
@@ -79,8 +78,7 @@ const testimonials: Testimonial[] = [
     company: "TechCorp",
     content: "This platform has transformed how we manage our ad campaigns. The ROI has been incredible!",
     avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-1",
-    category: "Advertiser",
-    rating: 5
+    category: "Advertiser"
   },
   {
     id: "2",
@@ -89,8 +87,7 @@ const testimonials: Testimonial[] = [
     company: "StartupX",
     content: "The targeting capabilities are unmatched. We've seen a 300% increase in conversion rates.",
     avatar: "https://source.unsplash.com/featured/150x150?man-portrait-1",
-    category: "Ad Buyer",
-    rating: 4
+    category: "Ad Buyer"
   },
   {
     id: "3",
@@ -99,28 +96,61 @@ const testimonials: Testimonial[] = [
     company: "AdVentures",
     content: "Finally, a platform that understands both advertisers and content creators. Brilliant!",
     avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-2",
-    category: "Affiliate",
-    rating: 5
+    category: "Affiliate"
   },
   {
     id: "4",
-    name: "James Wilson",
+    name: "David Wilson",
     role: "Growth Manager",
-    company: "ScaleUp Inc",
+    company: "GrowthLabs",
     content: "The analytics and insights have helped us optimize our campaigns like never before.",
     avatar: "https://source.unsplash.com/featured/150x150?man-portrait-2",
-    category: "Ad Buyer",
-    rating: 5
+    category: "Advertiser"
   },
   {
     id: "5",
-    name: "Lisa Zhang",
+    name: "Lisa Chen",
     role: "Content Creator",
-    company: "Creative Studios",
-    content: "As a content creator, this platform has made monetization seamless and profitable.",
+    company: "Digital Creators Co",
+    content: "As a content creator, this platform has opened up amazing opportunities for monetization.",
     avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-3",
-    category: "Affiliate",
-    rating: 4
+    category: "Affiliate"
+  },
+  {
+    id: "6",
+    name: "James Thompson",
+    role: "Media Buyer",
+    company: "MediaPro",
+    content: "The automation features have saved us countless hours. Highly recommended!",
+    avatar: "https://source.unsplash.com/featured/150x150?man-portrait-3",
+    category: "Ad Buyer"
+  },
+  {
+    id: "7",
+    name: "Sophie Anderson",
+    role: "Marketing Manager",
+    company: "BrandBoost",
+    content: "The customer support is exceptional. They're always there to help optimize our campaigns.",
+    avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-4",
+    category: "Advertiser"
+  },
+  {
+    id: "8",
+    name: "Alex Rodriguez",
+    role: "Digital Marketing Lead",
+    company: "TechGrowth",
+    content: "The platform's AI-powered targeting has revolutionized our ad performance. Game-changing!",
+    avatar: "https://source.unsplash.com/featured/150x150?man-portrait-4",
+    category: "Ad Buyer"
+  },
+  {
+    id: "9",
+    name: "Maya Patel",
+    role: "Social Media Manager",
+    company: "InfluenceHub",
+    content: "The integration with social platforms is seamless. Our engagement rates have skyrocketed.",
+    avatar: "https://source.unsplash.com/featured/150x150?woman-portrait-5",
+    category: "Affiliate"
   }
 ]
 
@@ -128,60 +158,170 @@ const duration = 0.15
 const transition = { duration, ease: [0.32, 0.72, 0, 1] }
 const transitionOverlay = { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
 
-const TestimonialCard = memo(({ testimonial, isActive = false }: { testimonial: Testimonial, isActive?: boolean }) => (
-  <Card 
-    className={`
-      ${isActive ? 'w-[400px] scale-110 shadow-lg z-10' : 'w-[300px]'} 
-      bg-gradient-to-br from-[#140047]/80 via-[#1a0066]/80 to-[#200080]/80 
-      border-[#4f2da3]/50 hover:border-[#6b3dcc]/50 
-      shadow-xl shadow-black/10
-      transition-all duration-300
-      backdrop-blur-sm
-      hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]
-    `}
-  >
-    <CardContent className="p-6">
-      <div className="flex items-center gap-4 mb-4">
-        <Avatar className="h-12 w-12 border-2 border-[#4f2da3]/30">
+const TestimonialCard = memo(
+  ({ testimonial, isActive }: { testimonial: Testimonial; isActive: boolean }) => {
+    return (
+      <Card className="bg-[#1a0a3d]/80 backdrop-blur-sm border-[#4f2da3]/30 p-4">
+        <CardContent className="p-0">
+          <div className="flex items-center gap-3 mb-3">
+            <Avatar className="h-10 w-10 border-2 border-[#4f2da3]/30">
           <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
           <AvatarFallback className="bg-[#4f2da3]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
         </Avatar>
         <div>
-          <h4 className="font-semibold text-white">{testimonial.name}</h4>
-          <p className="text-sm text-gray-300">{testimonial.role} at {testimonial.company}</p>
+              <h4 className="font-semibold text-white text-sm">{testimonial.name}</h4>
+              <p className="text-xs text-gray-300">{testimonial.role} at {testimonial.company}</p>
         </div>
       </div>
-      <div className="flex items-center gap-1 mb-3">
-        {[...Array(5)].map((_, i) => (
-          <svg
-            key={i}
-            className={`h-4 w-4 ${i < testimonial.rating ? "text-yellow-500" : "text-gray-600"}`}
-            fill="currentColor"
-            viewBox="0 0 20 20"
+          <p className="text-xs text-gray-300 leading-relaxed mb-3">{testimonial.content}</p>
+          <div className="pt-3 border-t border-[#4f2da3]/50">
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 rounded-full bg-[#4f2da3]/20 flex items-center justify-center">
+                <svg
+                  className="h-3 w-3 text-[#9575ff]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
           >
             <path
-              fillRule="evenodd"
-              d="M10 15.585l-7.07 3.707 1.35-7.87-5.72-5.573 7.91-1.149L10 0l3.53 7.7 7.91 1.149-5.72 5.573 1.35 7.87L10 15.585z"
-              clipRule="evenodd"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-        ))}
+              </div>
+              <span className="text-xs text-gray-300">{testimonial.category}</span>
       </div>
-      <p className="text-sm text-gray-300 leading-relaxed mb-4">{testimonial.content}</p>
-      <div className="pt-4 border-t border-[#4f2da3]/50">
-        <span className={`text-xs px-3 py-1.5 rounded-full font-medium ${
-          testimonial.category === "Advertiser" 
-            ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" 
-            : testimonial.category === "Ad Buyer"
-            ? "bg-[#4f2da3]/10 text-[#a98eff] border border-[#4f2da3]/20"
-            : "bg-purple-500/10 text-purple-400 border border-purple-500/20"
-        }`}>
-          {testimonial.category}
-        </span>
       </div>
     </CardContent>
   </Card>
-))
+    )
+  }
+)
+
+const AnimatedLogo = () => {
+  return (
+    <motion.div
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 z-10"
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1
+      }}
+      transition={{
+        duration: 1,
+        ease: "easeOut"
+      }}
+    >
+      {/* Outer rotating ring */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          border: '2px solid rgba(79, 45, 163, 0.3)',
+          borderRadius: '50%',
+        }}
+        animate={{ 
+          rotate: 360,
+          scale: [1, 1.1, 1]
+        }}
+        transition={{
+          rotate: {
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          },
+          scale: {
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }
+        }}
+      />
+      
+      {/* Middle rotating ring */}
+      <motion.div
+        className="absolute inset-2"
+        style={{
+          border: '2px solid rgba(78, 234, 255, 0.3)',
+          borderRadius: '50%',
+        }}
+        animate={{ 
+          rotate: -360,
+          scale: [1.1, 1, 1.1]
+        }}
+        transition={{
+          rotate: {
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear"
+          },
+          scale: {
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }
+        }}
+      />
+
+      {/* Logo container */}
+      <motion.div
+        className="relative w-full h-full rounded-full overflow-hidden"
+        animate={{ 
+          rotate: [0, 360],
+        }}
+        transition={{
+          duration: 30,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      >
+        {/* Logo image with gradient overlay */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center"
+          animate={{
+            rotate: [360, 0],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <img 
+            src="/images/Picture1.png" 
+            alt="Logo"
+            className="w-32 h-32 object-contain"
+          />
+        </motion.div>
+
+        {/* Glowing dots */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 rounded-full bg-[#4EEAFF]"
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: `rotate(${i * 45}deg) translateX(${70}px) translateY(-50%)`,
+            }}
+            animate={{
+              opacity: [0.5, 1, 0.5],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              delay: i * 0.25,
+              ease: "easeInOut"
+            }}
+          />
+        ))}
+      </motion.div>
+    </motion.div>
+  )
+}
 
 const Carousel = memo(
   ({
@@ -197,9 +337,9 @@ const Carousel = memo(
   }) => {
     const isScreenSizeSm = useMediaQuery("(max-width: 640px)")
     const cylinderWidth = isScreenSizeSm ? 1100 : 1800
+    const faceWidth = 200
     const faceCount = testimonials.length
-    const faceWidth = cylinderWidth / faceCount
-    const radius = cylinderWidth / (2 * Math.PI)
+    const radius = 400
     const rotation = useMotionValue(0)
     const transform = useTransform(
       rotation,
@@ -271,6 +411,7 @@ const Carousel = memo(
           willChange: "transform",
         }}
       >
+        <AnimatedLogo />
         <motion.div
           drag={isCarouselActive ? "x" : false}
           className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing"
@@ -319,7 +460,7 @@ const Carousel = memo(
             >
               <motion.div
                 layoutId={`testimonial-${testimonial.id}`}
-                className="w-[300px]"
+                className="w-[200px]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={transition}

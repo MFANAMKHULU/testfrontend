@@ -1,219 +1,683 @@
 "use client"
 
-import { DashboardLayout } from "@/components/dashboard/layout"
+import * as React from "react"
 import { motion } from "framer-motion"
 import { 
+  BarChart2, 
   Users, 
   DollarSign, 
   TrendingUp,
-  Target,
-  BarChart2
+  MessageSquare,
+  Bell,
+  ChevronRight,
+  Search
 } from "lucide-react"
-import clsx from "clsx"
+import { AnimatedButton } from "@/components/animated-button"
 
 const stats = [
   {
-    label: "Total Budget",
-    value: "$150,000",
-    change: "-8.2%",
+    name: "Total Revenue",
+    value: "$45,231.89",
+    change: "+20.1% from last month",
     icon: DollarSign,
-    trend: "down"
+    color: "#F9CA56" // Yellow from logo
   },
   {
-    label: "Active Campaigns",
+    name: "Active Campaigns",
     value: "12",
-    change: "+3",
-    icon: Target,
-    trend: "up"
+    change: "+2 new this month",
+    icon: BarChart2,
+    color: "#6B54FA" // Purple from logo
   },
   {
-    label: "Total Reach",
-    value: "2.4M",
-    change: "+24.5%",
+    name: "Total Influencers",
+    value: "48",
+    change: "+5 new this month",
     icon: Users,
-    trend: "up"
+    color: "#53E2D2" // Teal from logo
   },
   {
-    label: "ROI",
-    value: "285%",
-    change: "+12.3%",
+    name: "Engagement Rate",
+    value: "4.2%",
+    change: "+0.3% from last month",
     icon: TrendingUp,
-    trend: "up"
+    color: "#F9CA56" // Yellow from logo
   }
 ]
 
-const activeCampaigns = [
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
+const revenueData = {
+  Mar: "$10,500",
+  current: {
+    amount: "$10,500",
+    percentage: "14%",
+    vsLastMonth: "vs prev month",
+    ofTotal: "37% of total revenue"
+  }
+}
+
+const topAdSpaces = [
   {
-    name: "Summer Collection Launch",
-    platform: "Instagram",
-    budget: "$25,000",
-    reach: "450K",
-    status: "Active",
-    performance: "High"
+    name: "Tech Blog Premium Banner",
+    revenue: "$4,200",
+    period: "This month",
+    color: "#F9CA56" // Yellow
   },
   {
-    name: "Brand Awareness",
-    platform: "TikTok",
-    budget: "$18,000",
-    reach: "820K",
-    status: "Active",
-    performance: "Medium"
+    name: "Newsletter Sponsorship",
+    revenue: "$3,150",
+    period: "This month",
+    color: "#6B54FA" // Purple
   },
   {
-    name: "Product Showcase",
-    platform: "YouTube",
-    budget: "$32,000",
-    reach: "290K",
-    status: "Scheduled",
-    performance: "Pending"
+    name: "Podcast Ad Spot",
+    revenue: "$2,800",
+    period: "This month",
+    color: "#53E2D2" // Teal
+  }
+]
+
+const recentRequests = [
+  {
+    company: "TechGadgets Inc.",
+    type: "Tech Blog Banner",
+    time: "2 hours ago"
+  },
+  {
+    company: "SaaS Platform Pro",
+    type: "Newsletter",
+    time: "5 hours ago"
+  },
+  {
+    company: "CloudCompute Ltd",
+    type: "Podcast Ad",
+    time: "1 day ago"
+  }
+]
+
+const recentMessages = [
+  {
+    name: "Sarah Johnson",
+    message: "Question about banner specs",
+    time: "1 hour ago"
+  },
+  {
+    name: "Michael Chen",
+    message: "Campaign renewal",
+    time: "3 hours ago"
+  },
+  {
+    name: "Jessica Williams",
+    message: "Payment confirmation",
+    time: "5 hours ago"
   }
 ]
 
 export default function CompanyDashboard() {
+  const [activeTab, setActiveTab] = React.useState<'overview' | 'analytics' | 'reports'>('overview')
+
+  // Logo colors for the circle background
+  const circleColors = {
+    overview: "rgba(249, 202, 86, 0.05)", // Yellow transparent
+    analytics: "rgba(107, 84, 250, 0.05)", // Purple transparent
+    reports: "rgba(83, 226, 210, 0.05)" // Teal transparent
+  }
+
+  // Border colors for the circle with glow
+  const circleBorderColors = {
+    overview: "#F9CA56", // Yellow
+    analytics: "#6B54FA", // Purple
+    reports: "#53E2D2" // Teal
+  }
+
+  const getTabContent = () => {
+    switch (activeTab) {
+      case 'analytics':
+        return {
+          title: "Analytics Overview",
+          description: "Detailed performance metrics and trends",
+          amount: "$12,750",
+          percentage: "18%",
+          comparison: "vs last period",
+          share: "42% of total analytics"
+        }
+      case 'reports':
+        return {
+          title: "Reports Overview",
+          description: "Generated reports and summaries",
+          amount: "$8,920",
+          percentage: "11%",
+          comparison: "vs previous reports",
+          share: "31% of total reports"
+        }
+      default:
+        return {
+          title: "Revenue Overview",
+          description: "Click on a month to view details",
+          amount: revenueData.current.amount,
+          percentage: revenueData.current.percentage,
+          comparison: revenueData.current.vsLastMonth,
+          share: revenueData.current.ofTotal
+        }
+    }
+  }
+
+  const content = getTabContent()
+
   return (
-    <DashboardLayout role="company">
-      <div className="space-y-8">
-        {/* Welcome Section */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Welcome back, Nike!</h1>
-            <p className="text-gray-400 mt-1">Monitor your campaign performance and ROI.</p>
-          </div>
-          <button className="px-4 py-2 bg-[#9575ff] text-white rounded-lg hover:bg-[#8a63ff] transition-colors">
-            Create Campaign
-          </button>
+    <div className="space-y-6 p-6">
+      {/* Horizontal Lines */}
+      <div className="flex flex-col gap-2 mb-8">
+        <motion.div 
+          className="h-0.5 bg-gradient-to-r from-[#F9CA56] to-transparent"
+          initial={{ width: 0 }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+        />
+        <motion.div 
+          className="h-0.5 bg-gradient-to-r from-[#6B54FA] to-transparent w-3/4"
+          initial={{ width: 0 }}
+          animate={{ width: "75%" }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+        />
+        <motion.div 
+          className="h-0.5 bg-gradient-to-r from-[#53E2D2] to-transparent w-1/2"
+          initial={{ width: 0 }}
+          animate={{ width: "50%" }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+        />
+        <motion.div 
+          className="h-0.5 bg-gradient-to-r from-[#F9CA56] to-transparent w-1/4"
+          initial={{ width: 0 }}
+          animate={{ width: "25%" }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+        />
         </div>
+
+      {/* Welcome Message */}
+      <h2 className="text-xl text-gray-400">Welcome back! Here's an overview of your advertising spaces.</h2>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
+        {stats.map((stat) => (
             <motion.div
-              key={stat.label}
+            key={stat.name}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="bg-[#1a1e32] p-6 rounded-lg border border-[#2a2e45]"
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">{stat.label}</p>
-                  <h3 className="text-2xl font-bold text-white mt-1">{stat.value}</h3>
-                </div>
-                <div className="p-2 bg-[#2a2e45] rounded-lg">
-                  <stat.icon className="h-5 w-5 text-[#9575ff]" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm">
-                <span className={clsx(
-                  "font-medium",
-                  stat.trend === "up" ? "text-green-400" : "text-red-400"
-                )}>
-                  {stat.change}
+            transition={{ duration: 0.5 }}
+            className="bg-[#0f1424] border rounded-xl p-6 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300"
+            style={{
+              borderColor: stat.color,
+              boxShadow: `0 0 20px ${stat.color}25`,
+            }}
+          >
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-gray-400 text-sm group-hover:text-white transition-colors">
+                  {stat.name}
                 </span>
-                <span className="text-gray-400 ml-2">vs last month</span>
+                <stat.icon 
+                  className="h-4 w-4 transition-colors" 
+                  style={{ color: stat.color }}
+                />
               </div>
+              <motion.div 
+                className="text-3xl font-bold mb-2 transition-all duration-300"
+                style={{ 
+                  color: 'white',
+                  textShadow: `0 0 10px ${stat.color}50`
+                }}
+              >
+                {stat.value}
+              </motion.div>
+              <div 
+                className="text-sm transition-colors"
+                style={{ color: stat.color }}
+              >
+                  {stat.change}
+              </div>
+            </div>
+            <div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+              style={{ 
+                background: `radial-gradient(circle at center, ${stat.color} 0%, transparent 70%)`
+              }}
+            />
             </motion.div>
           ))}
         </div>
 
-        {/* Active Campaigns */}
-        <div className="bg-[#1a1e32] rounded-lg border border-[#2a2e45]">
-          <div className="p-6 border-b border-[#2a2e45]">
-            <h2 className="text-lg font-semibold text-white">Active Campaigns</h2>
+      {/* Tabs */}
+      <div className="flex gap-6 border-b border-[#1a1e32] mb-6">
+        <button 
+          onClick={() => setActiveTab('overview')}
+          className={`px-4 py-2 text-white border-b-2 transition-colors ${
+            activeTab === 'overview' ? 'border-[#F9CA56]' : 'border-transparent text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          Overview
+        </button>
+        <button 
+          onClick={() => setActiveTab('analytics')}
+          className={`px-4 py-2 text-white border-b-2 transition-colors ${
+            activeTab === 'analytics' ? 'border-[#6B54FA]' : 'border-transparent text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          Analytics
+        </button>
+        <button 
+          onClick={() => setActiveTab('reports')}
+          className={`px-4 py-2 text-white border-b-2 transition-colors ${
+            activeTab === 'reports' ? 'border-[#53E2D2]' : 'border-transparent text-gray-400 hover:text-gray-300'
+          }`}
+        >
+          Reports
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content Section */}
+        <div className="lg:col-span-2 bg-[#0f1424] border border-[#1a1e32] rounded-xl p-6">
+          <h2 className="text-xl font-bold text-white mb-4">{content.title}</h2>
+          <p className="text-gray-400 mb-6">{content.description}</p>
+          
+          <div className="flex gap-8">
+            {/* Months List - Always visible */}
+            <div className="space-y-4">
+              {months.map((month) => (
+                <div 
+                  key={month}
+                  className={`px-4 py-2 rounded ${
+                    month === "Mar" ? "bg-[#1a1e32] text-white" : "text-gray-400"
+                  }`}
+                >
+                  {month}
+                  {month === "Mar" && (
+                    <div className="text-blue-400 mt-1">{revenueData[month]}</div>
+                  )}
           </div>
-          <div className="p-6">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="text-left text-sm text-gray-400">
-                    <th className="pb-4">Campaign</th>
-                    <th className="pb-4">Platform</th>
-                    <th className="pb-4">Budget</th>
-                    <th className="pb-4">Reach</th>
-                    <th className="pb-4">Status</th>
-                    <th className="pb-4">Performance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeCampaigns.map((campaign, index) => (
-                    <tr key={index} className="border-t border-[#2a2e45]">
-                      <td className="py-4 text-white">{campaign.name}</td>
-                      <td className="py-4 text-gray-300">{campaign.platform}</td>
-                      <td className="py-4 text-white">{campaign.budget}</td>
-                      <td className="py-4 text-gray-300">{campaign.reach}</td>
-                      <td className="py-4">
-                        <span className={clsx(
-                          "px-2 py-1 text-xs rounded-full",
-                          campaign.status === "Active" ? "bg-green-400/10 text-green-400" :
-                          "bg-blue-400/10 text-blue-400"
-                        )}>
-                          {campaign.status}
-                        </span>
-                      </td>
-                      <td className="py-4">
-                        <span className={clsx(
-                          "px-2 py-1 text-xs rounded-full",
-                          campaign.performance === "High" ? "bg-green-400/10 text-green-400" :
-                          campaign.performance === "Medium" ? "bg-yellow-400/10 text-yellow-400" :
-                          "bg-gray-400/10 text-gray-400"
-                        )}>
-                          {campaign.performance}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              ))}
+            </div>
+
+            {/* Circle Display with Glow */}
+            <div className="flex-1 flex items-center justify-center">
+              <motion.div 
+                className="relative w-64 h-64 rounded-full flex items-center justify-center"
+                style={{ 
+                  backgroundColor: circleColors[activeTab],
+                  border: `4px solid ${circleBorderColors[activeTab]}`,
+                  boxShadow: `0 0 20px ${circleBorderColors[activeTab]}`,
+                  transition: "all 0.5s ease"
+                }}
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                key={activeTab}
+              >
+                <div className="text-center">
+                  <motion.div 
+                    className="text-4xl font-bold text-white mb-2"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    style={{
+                      textShadow: `0 0 10px ${circleBorderColors[activeTab]}`
+                    }}
+                  >
+                    {content.amount}
+                  </motion.div>
+                  <motion.div 
+                    className="text-green-400 text-lg mb-1"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    ↑ {content.percentage}
+                  </motion.div>
+                  <motion.div 
+                    className="text-gray-400 text-sm"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    {content.comparison}
+                  </motion.div>
+                  <motion.div 
+                    className="text-gray-400 text-sm"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    {content.share}
+                  </motion.div>
+                </div>
+              </motion.div>
             </div>
           </div>
         </div>
 
-        {/* Analytics Preview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[#1a1e32] p-6 rounded-lg border border-[#2a2e45]">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white">Campaign Performance</h3>
-              <button className="text-[#9575ff] hover:text-[#8a63ff] transition-colors text-sm">
-                View Details →
-              </button>
+        {/* Top Performing Ad Spaces */}
+        <div className="bg-[#0f1424] border border-[#1a1e32] rounded-xl p-6 relative overflow-hidden">
+          <div className="relative z-10">
+            <motion.h2 
+              className="text-xl font-bold text-white mb-4"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Top Performing Ad Spaces
+            </motion.h2>
+            <motion.p 
+              className="text-gray-400 mb-6"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              Based on revenue this month
+            </motion.p>
+            
+            <div className="space-y-4">
+              {topAdSpaces.map((ad, index) => (
+                <motion.div 
+                  key={ad.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                  className="relative bg-[#1a1e32] rounded-lg p-4 group hover:-translate-y-1 transition-all duration-300"
+                  style={{
+                    border: `1px solid ${ad.color}25`,
+                    boxShadow: `0 0 20px ${ad.color}10`
+                  }}
+                >
+                  <h3 
+                    className="text-white font-medium mb-2 transition-colors"
+                    style={{
+                      textShadow: `0 0 10px ${ad.color}50`
+                    }}
+                  >
+                    {ad.name}
+                  </h3>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400 text-sm">{ad.period}</span>
+                    <span 
+                      className="text-white font-bold"
+                      style={{ color: ad.color }}
+                    >
+                      {ad.revenue}
+                    </span>
+                  </div>
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 rounded-lg"
+                    style={{ 
+                      background: `radial-gradient(circle at center, ${ad.color} 0%, transparent 70%)`
+                    }}
+                  />
+                </motion.div>
+              ))}
             </div>
-            <div className="h-48 flex items-center justify-center border border-[#2a2e45] rounded-lg">
-              <BarChart2 className="h-24 w-24 text-gray-600" />
-            </div>
+
+            <motion.button 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="w-full mt-6 py-3 text-center text-blue-400 bg-[#1a1e32] rounded-lg relative group overflow-hidden"
+              style={{
+                border: `1px solid ${circleBorderColors.analytics}25`,
+                boxShadow: `0 0 20px ${circleBorderColors.analytics}10`
+              }}
+            >
+              <span className="relative z-10 group-hover:text-white transition-colors">
+                View detailed analytics →
+              </span>
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                style={{ 
+                  background: `radial-gradient(circle at center, ${circleBorderColors.analytics} 0%, transparent 70%)`
+                }}
+              />
+            </motion.button>
           </div>
-          <div className="bg-[#1a1e32] p-6 rounded-lg border border-[#2a2e45]">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white">Top Influencers</h3>
-              <button className="text-[#9575ff] hover:text-[#8a63ff] transition-colors text-sm">
-                View All →
-              </button>
+          <div 
+            className="absolute inset-0 opacity-5"
+            style={{ 
+              background: `radial-gradient(circle at top right, #53E2D2 0%, transparent 70%)`
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Requests */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-[#0f1424] border border-[#1a1e32] rounded-xl p-6 relative overflow-hidden"
+        >
+          <div className="relative z-10">
+            <motion.h2 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xl font-bold text-white mb-4"
+              style={{ textShadow: '0 0 10px #53E2D240' }}
+            >
+              Recent Requests
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-gray-400 mb-6"
+            >
+              You have 5 pending requests
+            </motion.p>
+            
+            <div className="space-y-4">
+              {recentRequests.map((request, index) => (
+                <motion.div 
+                  key={request.company}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                  className="flex items-center justify-between p-4 bg-[#1a1e32] rounded-lg group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+                  style={{
+                    border: '1px solid #53E2D230',
+                    boxShadow: '0 0 15px #53E2D215'
+                  }}
+                >
+                  <div>
+                    <h3 
+                      className="text-white font-medium"
+                      style={{ textShadow: '0 0 10px #53E2D240' }}
+                    >
+                      {request.company}
+                    </h3>
+                    <p className="text-gray-400 text-sm">{request.type} • {request.time}</p>
+                  </div>
+                  <button className="px-3 py-1 text-sm text-[#53E2D2] hover:bg-[#53E2D2] hover:text-white bg-transparent rounded-lg relative group overflow-hidden border border-[#53E2D240] transition-all duration-300">
+                    View
+                  </button>
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                    style={{ 
+                      background: 'radial-gradient(circle at center, #53E2D2 0%, transparent 70%)'
+                    }}
+                  />
+                </motion.div>
+              ))}
             </div>
+
+            <motion.button 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="w-full mt-6 py-3 text-center text-[#53E2D2] bg-[#1a1e32] rounded-lg relative group overflow-hidden hover:bg-[#53E2D2] hover:text-white transition-all duration-300"
+              style={{
+                border: '1px solid #53E2D230',
+                boxShadow: '0 0 15px #53E2D215'
+              }}
+            >
+              View all requests →
+            </motion.button>
+          </div>
+          <div 
+            className="absolute inset-0 opacity-5"
+            style={{ 
+              background: 'radial-gradient(circle at top right, #53E2D2 0%, transparent 70%)'
+            }}
+          />
+        </motion.div>
+
+        {/* Recent Messages */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-[#0f1424] border border-[#1a1e32] rounded-xl p-6 relative overflow-hidden"
+        >
+          <div className="relative z-10">
+            <motion.h2 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xl font-bold text-white mb-4"
+              style={{ textShadow: '0 0 10px #6B54FA40' }}
+            >
+              Recent Messages
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-gray-400 mb-6"
+            >
+              You have 3 unread messages
+            </motion.p>
+            
+            <div className="space-y-4">
+              {recentMessages.map((message, index) => (
+                <motion.div 
+                  key={message.name}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                  className="flex items-center justify-between p-4 bg-[#1a1e32] rounded-lg group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+                  style={{
+                    border: '1px solid #6B54FA30',
+                    boxShadow: '0 0 15px #6B54FA15'
+                  }}
+                >
+                  <div className="flex-1">
+                    <h3 
+                      className="text-white font-medium"
+                      style={{ textShadow: '0 0 10px #6B54FA40' }}
+                    >
+                      {message.name}
+                    </h3>
+                    <p className="text-gray-400 text-sm">{message.message} • {message.time}</p>
+                  </div>
+                  <div className="w-2 h-2 rounded-full bg-[#6B54FA] ml-4" style={{ boxShadow: '0 0 10px #6B54FA' }}></div>
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300"
+                    style={{ 
+                      background: 'radial-gradient(circle at center, #6B54FA 0%, transparent 70%)'
+                    }}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.button 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="w-full mt-6 py-3 text-center text-[#6B54FA] bg-[#1a1e32] rounded-lg relative group overflow-hidden hover:bg-[#6B54FA] hover:text-white transition-all duration-300"
+              style={{
+                border: '1px solid #6B54FA30',
+                boxShadow: '0 0 15px #6B54FA15'
+              }}
+            >
+              View all messages →
+            </motion.button>
+          </div>
+          <div 
+            className="absolute inset-0 opacity-5"
+            style={{ 
+              background: 'radial-gradient(circle at top right, #6B54FA 0%, transparent 70%)'
+            }}
+          />
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-[#0f1424] border border-[#1a1e32] rounded-xl p-6 relative overflow-hidden"
+        >
+          <div className="relative z-10">
+            <motion.h2 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xl font-bold text-white mb-4"
+              style={{ textShadow: '0 0 10px #F9CA5640' }}
+            >
+              Quick Actions
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-gray-400 mb-6"
+            >
+              Common tasks and operations
+            </motion.p>
+            
             <div className="space-y-4">
               {[
-                { name: "John Doe", followers: "1.2M", engagement: "4.8%" },
-                { name: "Jane Smith", followers: "856K", engagement: "5.2%" },
-                { name: "Mike Johnson", followers: "643K", engagement: "4.5%" }
-              ].map((influencer, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border border-[#2a2e45] rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-full bg-[#2a2e45] flex items-center justify-center">
-                      <Users className="h-5 w-5 text-[#9575ff]" />
-                    </div>
-                    <div>
-                      <p className="text-white font-medium">{influencer.name}</p>
-                      <p className="text-gray-400 text-sm">{influencer.followers} followers</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-green-400 font-medium">{influencer.engagement}</p>
-                    <p className="text-gray-400 text-sm">Engagement</p>
-                  </div>
-                </div>
+                { text: "Add New Ad Space", color: "#F9CA56" },
+                { text: "Withdraw Earnings", color: "#6B54FA" },
+                { text: "Export Analytics", color: "#53E2D2" },
+                { text: "Update Profile", color: "#F9CA56" }
+              ].map((action, index) => (
+                <motion.button
+                  key={action.text}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2 + index * 0.1 }}
+                  className="w-full flex items-center justify-between bg-[#1a1e32] p-4 rounded-lg group hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
+                  style={{
+                    border: `1px solid ${action.color}30`,
+                    boxShadow: `0 0 15px ${action.color}15`
+                  }}
+                >
+                  <span 
+                    className="text-white relative z-10 group-hover:text-white transition-colors"
+                    style={{ textShadow: `0 0 10px ${action.color}40` }}
+                  >
+                    {action.text}
+                  </span>
+                  <ChevronRight 
+                    className="h-4 w-4 relative z-10 transition-colors duration-300" 
+                    style={{ color: action.color }}
+                  />
+                  <div 
+                    className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                    style={{ 
+                      background: `radial-gradient(circle at center, ${action.color} 0%, transparent 70%)`
+                    }}
+                  />
+                </motion.button>
               ))}
             </div>
           </div>
-        </div>
+          <div 
+            className="absolute inset-0 opacity-5"
+            style={{ 
+              background: 'radial-gradient(circle at top right, #F9CA56 0%, transparent 70%)'
+            }}
+          />
+        </motion.div>
       </div>
-    </DashboardLayout>
+    </div>
   )
 } 
