@@ -1,146 +1,166 @@
 "use client"
 
-import type React from "react"
-import { ArrowRight, DollarSign, Search, Upload } from "lucide-react"
+import React from "react"
 import { motion } from "framer-motion"
-import { useRef } from "react"
-import { ParallaxSection } from "@/components/parallax-section"
-import { AnimatedContent } from "@/components/animated-content"
-import { AnimatedList } from "@/components/animated-list"
+import { Meteors } from "./ui/meteors"
+import { 
+  Upload, 
+  Settings, 
+  BarChart3, 
+  Wallet, 
+  Search, 
+  Lightbulb, 
+  Rocket, 
+  LineChart 
+} from "lucide-react"
+
+const steps = [
+  {
+    title: "For Advertisers",
+    steps: [
+      {
+        title: "List Your Space",
+        description: "Create a listing for your ad space with details about your audience, reach, and pricing.",
+        icon: Upload,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+      {
+        title: "Set Your Terms",
+        description: "Define your advertising guidelines, content restrictions, and preferred payment methods.",
+        icon: Settings,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+      {
+        title: "Review Offers",
+        description: "Receive and review offers from potential advertisers, negotiate terms, and accept the best fit.",
+        icon: BarChart3,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+      {
+        title: "Get Paid",
+        description: "Once the campaign is complete, receive payment directly to your preferred method.",
+        icon: Wallet,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+    ],
+  },
+  {
+    title: "For Ad Buyers",
+    steps: [
+      {
+        title: "Browse Spaces",
+        description: "Explore a wide range of ad spaces across different platforms and audience demographics.",
+        icon: Search,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+      {
+        title: "Make Offers",
+        description: "Submit offers for ad spaces that match your target audience and campaign goals.",
+        icon: Lightbulb,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+      {
+        title: "Launch Campaign",
+        description: "Once your offer is accepted, upload your ad content and launch your campaign.",
+        icon: Rocket,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+      {
+        title: "Track Performance",
+        description: "Monitor your campaign's performance with detailed analytics and insights.",
+        icon: LineChart,
+        color: "from-[#32147f] to-[#4a1fb8]",
+      },
+    ],
+  },
+]
 
 export function HowItWorks() {
-  const containerRef = useRef<HTMLDivElement>(null)
-
   return (
-    <section ref={containerRef} className="py-20 relative">
-      {/* Animated background with dark blue gradient matching the theme */}
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#32147f]/20 to-transparent" />
+      <Meteors number={20} className="absolute inset-0" />
+      <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8 bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] font-['Calibri',sans-serif] relative">
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] z-0"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold mb-4 text-yellow-400"
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ 
+              opacity: 1, 
+              x: 0,
+              transition: {
+                type: "spring",
+                stiffness: 50,
+                damping: 15,
+                mass: 1
+              }
+            }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      />
-
-      <div className="container-narrow relative z-10">
-        <ParallaxSection direction="up" speed={0.2} className="mb-16">
-          <div className="text-center">
-            <AnimatedContent>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">How It Works</h2>
-            </AnimatedContent>
-
-            <AnimatedContent delay={0.1}>
+          >
+            How It Works
+          </motion.h2>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-                Our platform connects advertisers with ad buyers in a seamless marketplace
+            Discover how our platform has transformed advertising for businesses and creators alike
               </p>
-            </AnimatedContent>
-          </div>
-        </ParallaxSection>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          <AnimatedContent direction="left">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {steps.map((section, sectionIndex) => (
             <motion.div
-              className="bg-[#1a1e32]/80 backdrop-blur-sm rounded-xl p-8 shadow-sm hover-lift border border-[#2a2e45]"
-              whileHover={{
-                y: -5,
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)",
-              }}
-              transition={{ duration: 0.2 }}
+              key={sectionIndex}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: sectionIndex * 0.2 }}
+              className="relative"
             >
-              <h3 className="text-2xl font-bold mb-6 flex items-center">
-                <span className="bg-[#9575ff]/20 text-[#9575ff] p-2 rounded-lg mr-3">For Advertisers</span>
-              </h3>
-              <AnimatedList staggerDelay={0.15}>
-                <Step
-                  number={1}
-                  title="List Your Ad Space"
-                  description="Create a detailed listing of your website, app, newsletter, or any marketing platform."
-                  icon={Upload}
-                />
-                <Step
-                  number={2}
-                  title="Receive Ad Requests"
-                  description="Ad buyers will send requests to place their ads on your platform."
-                  icon={Search}
-                />
-                <Step
-                  number={3}
-                  title="Earn Revenue"
-                  description="Accept requests, display ads, and earn money from your platform."
-                  icon={DollarSign}
-                />
-              </AnimatedList>
-            </motion.div>
-          </AnimatedContent>
-
-          <AnimatedContent direction="right" delay={0.2}>
+              {/* Card content */}
+              <div className="relative p-4 bg-[#140047]/80 backdrop-blur-xl rounded-lg border border-[#32147f]/40 shadow-[0_0_20px_rgba(50,20,127,0.4)] hover:shadow-[0_0_30px_rgba(50,20,127,0.6)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#32147f]/40 to-transparent rounded-lg" />
+                <div className="relative">
+                  <h3 className="text-lg font-bold mb-4 text-white">{section.title}</h3>
+                  <div className="space-y-3">
+                    {section.steps.map((step, index) => {
+                      const Icon = step.icon;
+                      return (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.5, delay: index * 0.1 }}
+                          whileHover={{ scale: 1.02 }}
+                          className="flex items-start gap-2 group hover:bg-[#32147f]/30 p-2 rounded-md transition-all duration-300"
+                        >
             <motion.div
-              className="bg-[#1a1e32]/80 backdrop-blur-sm rounded-xl p-8 shadow-sm hover-lift border border-[#2a2e45]"
-              whileHover={{
-                y: -5,
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)",
-              }}
-              transition={{ duration: 0.2 }}
-            >
-              <h3 className="text-2xl font-bold mb-6 flex items-center">
-                <span className="bg-[#9575ff]/20 text-[#9575ff] p-2 rounded-lg mr-3">For Ad Buyers</span>
-              </h3>
-              <AnimatedList staggerDelay={0.15}>
-                <Step
-                  number={1}
-                  title="Find Ad Spaces"
-                  description="Browse and search for the perfect platforms to display your ads."
-                  icon={Search}
-                />
-                <Step
-                  number={2}
-                  title="Submit Your Ads"
-                  description="Upload your ad creatives and set your targeting preferences."
-                  icon={Upload}
-                />
-                <Step
-                  number={3}
-                  title="Track Performance"
-                  description="Monitor your ad performance and optimize for better results."
-                  icon={ArrowRight}
-                />
-              </AnimatedList>
+                            className="flex-shrink-0 w-8 h-8 rounded-md bg-gradient-to-br from-[#32147f] to-[#4a1fb8] flex items-center justify-center text-white group-hover:scale-110 group-hover:from-[#9575ff] group-hover:to-[#b388ff] transition-all duration-300 shadow-[0_0_10px_rgba(149,117,255,0.3)]"
+                            whileHover={{ rotate: 360 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Icon className="w-4 h-4" />
+                          </motion.div>
+                          <div>
+                            <h4 className="text-base font-semibold mb-1 text-white group-hover:text-[#9575ff] transition-colors duration-300">
+                              {step.title}
+                            </h4>
+                            <p className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors duration-300">
+                              {step.description}
+                            </p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
             </motion.div>
-          </AnimatedContent>
+          ))}
         </div>
       </div>
     </section>
-  )
-}
-
-function Step({
-  number,
-  title,
-  description,
-  icon: Icon,
-}: {
-  number: number
-  title: string
-  description: string
-  icon: React.ElementType
-}) {
-  return (
-    <motion.div
-      whileHover={{ x: 5 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      className="flex gap-4 group"
-    >
-      <div className="h-8 w-8 rounded-full bg-[#9575ff]/20 flex items-center justify-center shrink-0 group-hover:bg-[#9575ff]/30 transition-colors text-white">
-        <span className="text-sm font-bold">{number}</span>
-      </div>
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <Icon className="h-4 w-4 text-[#9575ff]" />
-          <h4 className="font-medium text-white">{title}</h4>
-        </div>
-        <p className="text-sm text-gray-300">{description}</p>
-      </div>
-    </motion.div>
   )
 }
 

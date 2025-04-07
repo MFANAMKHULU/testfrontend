@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import * as React from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-// import { motion } from "framer-motion"
 import { 
   LayoutDashboard, 
   Users, 
@@ -13,9 +13,15 @@ import {
   DollarSign,
   Bell,
   Menu,
-  X
+  X,
+  MonitorPlay,
+  PlusCircle,
+  HelpCircle,
+  LogOut
 } from "lucide-react"
 import clsx from "clsx"
+import { createClient } from '@supabase/supabase-js'
+import { UserProfilePopup } from "./user-profile-popup"
 
 interface SidebarLink {
   icon: any
@@ -23,106 +29,145 @@ interface SidebarLink {
   href: string
 }
 
-const commonLinks: SidebarLink[] = [
+const mainLinks: SidebarLink[] = [
   {
     icon: LayoutDashboard,
-    label: "Overview",
-    href: "/dashboard"
+    label: "Dashboard",
+    href: "/dashboard/advertiser"
   },
   {
-    icon: BarChart2,
-    label: "Analytics",
-    href: "/dashboard/analytics"
+    icon: MonitorPlay,
+    label: "Ad Spaces",
+    href: "/ad-spaces"
+  },
+  {
+    icon: Bell,
+    label: "Requests",
+    href: "/dashboard/advertiser/requests"
   },
   {
     icon: MessageSquare,
     label: "Messages",
-    href: "/dashboard/messages"
+    href: "/dashboard/advertiser/messages"
   },
   {
-    icon: Settings,
-    label: "Settings",
-    href: "/dashboard/settings"
+    icon: BarChart2,
+    label: "Analytics",
+    href: "/dashboard/advertiser/analytics"
   }
 ]
 
-const roleSpecificLinks = {
-  influencer: [
-    {
-      icon: Users,
-      label: "Followers",
-      href: "/dashboard/followers"
-    },
-    {
-      icon: DollarSign,
-      label: "Earnings",
-      href: "/dashboard/earnings"
-    }
-  ],
-  affiliate: [
-    {
-      icon: DollarSign,
-      label: "Commissions",
-      href: "/dashboard/commissions"
-    },
-    {
-      icon: Users,
-      label: "Referrals",
-      href: "/dashboard/referrals"
-    }
-  ],
-  company: [
-    {
-      icon: Users,
-      label: "Campaigns",
-      href: "/dashboard/campaigns"
-    },
-    {
-      icon: DollarSign,
-      label: "Budget",
-      href: "/dashboard/budget"
-    }
-  ]
-}
+const bottomLinks: SidebarLink[] = [
+  {
+    icon: Settings,
+    label: "Settings",
+    href: "/dashboard/advertiser/settings"
+  },
+  {
+    icon: HelpCircle,
+    label: "Help & Support",
+    href: "/dashboard/advertiser/support"
+  },
+  {
+    icon: LogOut,
+    label: "Logout",
+    href: "/auth/logout"
+  }
+]
 
 export function DashboardLayout({ 
-  children, 
-  role 
+  children 
 }: { 
   children: React.ReactNode
-  role: "influencer" | "affiliate" | "company"
 }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [userData, setUserData] = useState<any>(null)
   const pathname = usePathname()
   
-  const links = [...commonLinks, ...roleSpecificLinks[role]]
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { data, error } = await supabase
+          .from('users_account')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+
+        if (error) throw error
+        setUserData(data)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+      }
+    }
+
+    fetchUserData()
+  }, [])
 
   return (
-    <div className="min-h-screen game bg-[#0f1424] text-white">
-      {/* Mobile Sidebar Toggle */}
-      <button
-        className="fixed top-4 left-4 z-50 p-2 bg-[#1a1e32] rounded-lg md:hidden"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-      >
-        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
+    <div className="flex h-screen bg-[#140047]">
       {/* Sidebar */}
-      <aside
+      <aside className="w-64 bg-[#140047] border-r border-[#2a2e45]/10">
+        <div className="flex flex-col h-full px-4 py-6">
+          {/* User Profile Section */}
+          <div 
+            className="flex items-center gap-3 mb-8 px-2 cursor-pointer hover:bg-[#2a2e45] rounded-lg p-2 transition-colors"
+            onClick={() => setIsProfileOpen(true)}
+          >
+            <div className="h-10 w-10 rounded-full bg-[#2a2e45] flex items-center justify-center">
+              <span className="text-sm font-medium text-white">
+                {userData?.full_name?.[0] || 'A'}
+              </span>
+            </div>
+            <div>
+              <h2 className="text-white font-medium">{userData?.full_name || 'John Doe'}</h2>
+              <p className="text-sm text-gray-400">Premium Advertiser</p>
+            </div>
+          </div>
+
+          {/* Main Navigation */}
+          <nav className="flex-1 space-y-1">
+            {mainLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 w-64 bg-[#140047] transform transition-transform duration-200 ease-in-out md:translate-x-0",
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="p-6">
-          <h1 className="text-2xl font-bold text-[#9575ff] mb-8">Adsy</h1>
+                  "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                  pathname === link.href
+                    ? "bg-[#9575ff] text-white"
+                    : "text-gray-300 hover:bg-[#2a2e45] hover:text-white"
+                )}
+              >
+                <link.icon className="h-5 w-5 mr-3" />
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Add New Ad Space Button */}
+          <div className="px-2 my-4">
+            <button className="w-full px-3 py-2 bg-[#2a2e45] text-white rounded-lg flex items-center text-sm font-medium hover:bg-[#353b57] transition-colors">
+              <PlusCircle className="h-5 w-5 mr-3" />
+              Add New Ad Space
+            </button>
+          </div>
+
+          {/* Bottom Navigation */}
           <nav className="space-y-1">
-            {links.map((link) => (
+            {bottomLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors",
+                  "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                   pathname === link.href
                     ? "bg-[#9575ff] text-white"
                     : "text-gray-300 hover:bg-[#2a2e45] hover:text-white"
@@ -137,27 +182,26 @@ export function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className={clsx(
-        "transition-all duration-200 ease-in-out",
-        "md:ml-64 min-h-screen"
-      )}>
-        {/* Top Navigation */}
-        <header className="bg-[#1a1e32] border-b border-[#2a2e45]">
-          <div className="flex items-center justify-end px-6 h-16">
-            <button className="p-2 hover:bg-[#2a2e45] rounded-lg mr-4">
-              <Bell size={20} />
-            </button>
-            <div className="h-8 w-8 rounded-full bg-[#9575ff] flex items-center justify-center">
-              <span className="text-sm font-medium">JD</span>
-            </div>
-          </div>
-        </header>
-
-        {/* Page Content */}
-        <div className="p-6">
+      <main className="flex-1 overflow-auto">
+        <div className="h-full">
           {children}
         </div>
       </main>
+
+      {/* Mobile Sidebar Toggle */}
+      <button
+        className="fixed top-4 left-4 z-50 p-2 bg-[#1a1e32] rounded-lg md:hidden"
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* User Profile Popup */}
+      <UserProfilePopup
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        userData={userData}
+      />
     </div>
   )
 } 

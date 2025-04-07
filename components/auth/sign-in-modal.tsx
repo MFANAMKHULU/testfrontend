@@ -6,6 +6,9 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { AnimatedButton } from "@/components/animated-button"
 import { AnimatedInput } from "@/components/animated-input"
+import { createClient } from '@supabase/supabase-js'
+import { useRouter } from 'next/navigation'
+import { LoadingLogo } from "@/components/loading-logo"
 
 interface SignInModalProps {
   isOpen: boolean
@@ -17,6 +20,14 @@ export function SignInModal({ isOpen, onClose, onSignUp }: SignInModalProps) {
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [colorIndex, setColorIndex] = React.useState(0)
+  const [error, setError] = React.useState("")
+  const [loading, setLoading] = React.useState(false)
+  const router = useRouter()
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   // Logo colors for the border
   const logoColors = [
@@ -35,10 +46,56 @@ export function SignInModal({ isOpen, onClose, onSignUp }: SignInModalProps) {
     return () => clearInterval(interval)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle sign in logic here
-    console.log("Sign in with:", { email, password })
+    setError("")
+    setLoading(true)
+
+    try {
+      // Sign in with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      if (authError) throw authError
+
+      // Get user type from users_account table
+      const { data: userData, error: userError } = await supabase
+        .from('users_account')
+        .select('user_type')
+        .eq('id', authData.user?.id)
+        .single()
+
+      if (userError) throw userError
+
+      // Redirect based on user type
+      switch (userData.user_type) {
+        case 'advertiser':
+          router.push('/dashboard/advertiser')
+          break
+        case 'company':
+          router.push('/dashboard/company')
+          break
+        case 'influencer':
+          router.push('/dashboard/influencer')
+          break
+        case 'affiliate':
+          router.push('/dashboard/affiliate')
+          break
+        case 'user':
+          router.push('/ad-spaces')
+          break
+        default:
+          throw new Error('Invalid user type')
+      }
+
+      onClose()
+    } catch (error: any) {
+      setError(error.message || "An error occurred during sign in")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -65,6 +122,9 @@ export function SignInModal({ isOpen, onClose, onSignUp }: SignInModalProps) {
             <div className="bg-[#1a1e32] border border-[#2a2e45] rounded-xl shadow-lg p-6">
               {/* Logo */}
               <div className="flex justify-center mb-6">
+                {loading ? (
+                  <LoadingLogo size={44} />
+                ) : (
                 <div 
                   className="relative flex items-center justify-center"
                   style={{ 
@@ -91,6 +151,7 @@ export function SignInModal({ isOpen, onClose, onSignUp }: SignInModalProps) {
                     }}
                   />
                 </div>
+                )}
               </div>
 
               <div className="flex justify-between items-center mb-6">
@@ -144,6 +205,10 @@ export function SignInModal({ isOpen, onClose, onSignUp }: SignInModalProps) {
                   </button>
                 </div>
 
+                {error && (
+                  <p className="text-sm text-red-500">{error}</p>
+                )}
+
                 <AnimatedButton
                   type="submit"
                   variant="primary-gradient"
@@ -151,8 +216,9 @@ export function SignInModal({ isOpen, onClose, onSignUp }: SignInModalProps) {
                   hoverScale={1.02}
                   glowOnHover={true}
                   sweep={true}
+                  disabled={loading}
                 >
-                  Sign In
+                  {loading ? "Signing in..." : "Sign In"}
                 </AnimatedButton>
               </form>
 

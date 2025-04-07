@@ -15,16 +15,28 @@ const LoadingContext = createContext<LoadingContextType>({
 })
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true) // Start with loading state on first load
   const pathname = usePathname()
 
+  // First load effect
   useEffect(() => {
-    setIsLoading(true)
-    const timer = setTimeout(() => {
+    const initialTimer = setTimeout(() => {
       setIsLoading(false)
-    }, 3000) // 3 seconds loading time
+    }, 2500) // Initial loading time
+    
+    return () => clearTimeout(initialTimer)
+  }, [])
 
-    return () => clearTimeout(timer)
+  // Navigation loading effect
+  useEffect(() => {
+    if (pathname) {
+      setIsLoading(true)
+      const timer = setTimeout(() => {
+        setIsLoading(false)
+      }, 1500) // Reduced loading time for navigation
+
+      return () => clearTimeout(timer)
+    }
   }, [pathname])
 
   return (

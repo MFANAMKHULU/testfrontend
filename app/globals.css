@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Calibri font */
+@font-face {
+  font-family: 'Calibri';
+  src: url('/fonts/calibri.woff2') format('woff2'),
+       url('/fonts/calibri.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Calibri';
+  src: url('/fonts/calibri-bold.woff2') format('woff2'),
+       url('/fonts/calibri-bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -45,6 +64,8 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 260 30% 25%;
     --sidebar-ring: 260 100% 40%;
+    
+    --font-family: 'Calibri', 'Segoe UI', system-ui, sans-serif;
   }
 
   .dark {
@@ -96,12 +117,15 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    font-family: var(--font-family);
   }
-  body {
+  
+  html, body {
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: var(--font-family);
   }
 
   /* Replace with this to make ALL headings bold */
@@ -112,6 +136,14 @@
   h5,
   h6 {
     @apply font-bold;
+    font-family: var(--font-family);
+    letter-spacing: -0.01em;
+  }
+
+  /* Add styles for paragraphs to improve readability */
+  p {
+    font-family: var(--font-family);
+    line-height: 1.6;
   }
 
   /* Make all interactive elements show pointer cursor */
@@ -124,6 +156,15 @@
   select,
   .clickable {
     cursor: pointer;
+    font-family: var(--font-family);
+  }
+
+  /* Form elements with consistent font */
+  input, 
+  textarea, 
+  select, 
+  button {
+    font-family: var(--font-family);
   }
 
   /* Scrollbar styles */

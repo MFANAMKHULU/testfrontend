@@ -53,33 +53,33 @@ export function Footer() {
                   }}
                 />
               </div>
-              <div className="flex flex-col text-sm font-medium text-white space-y-0.5">
+              <div className="flex flex-col text-sm font-medium text-white space-y-0.5 font-['Verdana',sans-serif]">
                 <span>All</span>
                 <span>Things</span>
                 <span>Advertising</span>
               </div>
             </div>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 font-['Verdana',sans-serif]">
               Empowering businesses with innovative advertising solutions.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-white font-semibold mb-4 font-['Verdana',sans-serif]">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/ad-spaces" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/ad-spaces" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Ad Spaces
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/about" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/contact" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Contact
                 </Link>
               </li>
@@ -88,20 +88,20 @@ export function Footer() {
 
           {/* Resources */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Resources</h3>
+            <h3 className="text-white font-semibold mb-4 font-['Verdana',sans-serif]">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/blog" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/faq" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/support" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Support
                 </Link>
               </li>
@@ -110,20 +110,20 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Legal</h3>
+            <h3 className="text-white font-semibold mb-4 font-['Verdana',sans-serif]">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/terms" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="text-gray-400 hover:text-white transition-colors">
+                <Link href="/cookies" className="text-gray-400 hover:text-white transition-colors font-['Verdana',sans-serif]">
                   Cookie Policy
                 </Link>
               </li>
@@ -134,7 +134,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="mt-12 pt-8 border-t border-[#2a2e45]">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 font-['Verdana',sans-serif]">
               © {new Date().getFullYear()} All Things Advertising. All rights reserved.
             </p>
             <div className="flex space-x-6">

@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { MessageSquare, X, Send, Mic, Bot, ShoppingCart, HelpCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import Link from "next/link"
+import Image from "next/image"
 
 type Message = {
   sender: "user" | "bot"
@@ -18,6 +19,34 @@ export function ChatBot() {
   const [isOpen, setIsOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [isListening, setIsListening] = useState(false)
+  const [colorIndex, setColorIndex] = useState(0)
+  const [pulseIntensity, setPulseIntensity] = useState(0.5)
+  
+  // Logo colors for animated circle
+  const logoColors = [
+    "#6B54FA", // Purple
+    "#FA6565", // Pink/Red
+    "#F9CA56", // Yellow/Gold
+    "#53E2D2"  // Teal
+  ]
+  
+  // Color rotation effect for the pulsing circle
+  useEffect(() => {
+    const colorInterval = setInterval(() => {
+      setColorIndex((prevIndex) => (prevIndex + 1) % logoColors.length)
+    }, 2000)
+    
+    // Pulsing effect
+    const pulseInterval = setInterval(() => {
+      setPulseIntensity(prev => prev === 0.5 ? 1 : 0.5)
+    }, 1000)
+    
+    return () => {
+      clearInterval(colorInterval)
+      clearInterval(pulseInterval)
+    }
+  }, [])
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: "bot",
@@ -78,12 +107,20 @@ export function ChatBot() {
               <CardHeader className="border-b border-[#2a2e45] p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Bot className="h-6 w-6 text-[#9575ff]" />
+                    <div className="relative h-10 w-10 rounded-full overflow-hidden">
+                      <Image 
+                        src="/images/Adsy.png" 
+                        alt="Adsy AI Assistant" 
+                        width={40} 
+                        height={40}
+                        className="object-cover"
+                      />
+                    </div>
                     <div>
-                      <Link href="/meet-adsy" className="text-lg font-semibold text-white hover:text-[#9575ff] transition-colors">
+                      <Link href="/meet-adsy" className="text-lg font-semibold text-white hover:text-[#9575ff] transition-colors font-['Verdana',sans-serif]">
                         Adsy
                       </Link>
-                      <p className="text-xs text-gray-400">AI Shopping Assistant</p>
+                      <p className="text-xs text-gray-400 font-['Verdana',sans-serif]">AI Shopping Assistant</p>
                     </div>
                   </div>
                   <Button
@@ -163,17 +200,65 @@ export function ChatBot() {
         )}
       </AnimatePresence>
 
+      <motion.div 
+        className="relative"
+        whileHover={{ scale: 1.1 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      >
+        {/* Pulsing outer ring with animated color */}
+        <motion.div 
+          className="absolute -inset-3 rounded-full z-0"
+          style={{ 
+            background: `radial-gradient(circle, ${logoColors[colorIndex]} 0%, rgba(0,0,0,0) 70%)`,
+            opacity: pulseIntensity
+          }}
+          animate={{ 
+            scale: [1, 1.1, 1],
+          }}
+          transition={{ 
+            duration: 2.5, 
+            repeat: Infinity,
+            repeatType: "reverse" 
+          }}
+        />
+
       <Button
         onClick={() => setIsOpen(!isOpen)}
         size="lg"
-        className="rounded-full w-14 h-14 bg-[#9575ff] hover:bg-[#8a63ff] shadow-lg shadow-purple-500/20"
+          className="relative rounded-full w-14 h-14 bg-[#0f1424] border-2 hover:bg-[#1a1e32] shadow-lg z-10 overflow-hidden p-0"
+          style={{ 
+            borderColor: logoColors[colorIndex],
+            transition: "border-color 0.5s ease-in-out"
+          }}
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-white" />
-        ) : (
-          <MessageSquare className="h-6 w-6 text-white" />
+            <X className="h-6 w-6 text-white absolute z-20" />
+          ) : (
+            <>
+              <div className="absolute inset-0 z-10 flex items-center justify-center">
+                <Image 
+                  src="/images/Adsy.png" 
+                  alt="Adsy AI Assistant" 
+                  width={56} 
+                  height={56}
+                  className="object-cover"
+                />
+              </div>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent z-20"
+                animate={{ 
+                  x: ["-100%", "100%"],
+                }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: 1.5,
+                  ease: "linear"
+                }}
+              />
+            </>
         )}
       </Button>
+      </motion.div>
     </div>
   )
 } 

@@ -14,13 +14,13 @@ export function PageContainer({ children, className }: PageContainerProps) {
       {/* Animated background with dark blue gradient matching the theme */}
       <motion.div
         className="fixed inset-0 bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] -z-10"
-        initial={{ opacity: 0 }}
+        initial={{ opacity: 1 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0 }}
       />
       
       {/* Content with proper spacing */}
-      <div className={cn("relative pt-32 pb-16", className)}>
+      <div className={cn("relative pt-32 pb-8", className)}>
         {children}
       </div>
     </>
