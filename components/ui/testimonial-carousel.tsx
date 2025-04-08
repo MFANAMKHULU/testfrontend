@@ -65,7 +65,7 @@ type Testimonial = {
   name: string
   role: string
   company: string
-  content: string
+  content: string | { id: string; author: string; company: string; rating: number; date: string; content: string }
   avatar: string
   category: "Advertiser" | "Ad Buyer" | "Affiliate"
 }
@@ -158,22 +158,47 @@ const duration = 0.15
 const transition = { duration, ease: [0.32, 0.72, 0, 1] }
 const transitionOverlay = { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
 
+// Helper function to safely extract content string
+const getContentString = (content: string | any): string => {
+  if (typeof content === 'string') {
+    return content;
+  }
+  
+  if (content && typeof content === 'object') {
+    // If it's an object with a content property, use that
+    if ('content' in content && typeof content.content === 'string') {
+      return content.content;
+    }
+    
+    // Otherwise stringify the object
+    return JSON.stringify(content);
+  }
+  
+  // Fallback for any other type
+  return String(content);
+}
+
 const TestimonialCard = memo(
   ({ testimonial, isActive }: { testimonial: Testimonial; isActive: boolean }) => {
+    // Safely extract content string
+    const contentString = getContentString(testimonial.content);
+    
     return (
       <Card className="bg-[#1a0a3d]/80 backdrop-blur-sm border-[#4f2da3]/30 p-4">
         <CardContent className="p-0">
           <div className="flex items-center gap-3 mb-3">
             <Avatar className="h-10 w-10 border-2 border-[#4f2da3]/30">
-          <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-          <AvatarFallback className="bg-[#4f2da3]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-        </Avatar>
-        <div>
+              <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+              <AvatarFallback className="bg-[#4f2da3]/20">{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <div>
               <h4 className="font-semibold text-white text-sm">{testimonial.name}</h4>
               <p className="text-xs text-gray-300">{testimonial.role} at {testimonial.company}</p>
-        </div>
-      </div>
-          <p className="text-xs text-gray-300 leading-relaxed mb-3">{testimonial.content}</p>
+            </div>
+          </div>
+          <p className="text-xs text-gray-300 leading-relaxed mb-3">
+            {contentString}
+          </p>
           <div className="pt-3 border-t border-[#4f2da3]/50">
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 rounded-full bg-[#4f2da3]/20 flex items-center justify-center">

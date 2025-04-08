@@ -11,7 +11,9 @@ interface LogoProps {
 export function Logo({ className, linkToHome = true }: LogoProps) {
   const logoContent = (
     <div className={cn("font-bold text-xl flex items-center", className)}>
-      {/* Logo content has been removed */}
+      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#0F0B2C] via-[#2a1760] to-[#341c7a] mr-1">All</span>
+      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#1a1145] via-[#2a1760] to-[#341c7a]">Things</span>
+      <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#2a1760] via-[#341c7a] to-[#9546ff] ml-1">Advertising</span>
     </div>
   )
 

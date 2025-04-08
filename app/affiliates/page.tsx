@@ -221,173 +221,142 @@ export default function AffiliatesPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <PageContainer>
         <AnimatedContent>
-          <div className="container">
-            <div className="max-w-2xl mx-auto text-center">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">Affiliate Program</h1>
-              <p className="text-gray-300 mb-8">
-                Join our affiliate network and earn commissions by promoting our platform
+          <div className="space-y-6">
+            {/* Header Section */}
+            <div className="text-center space-y-4">
+              <h1 className="text-4xl font-bold text-gray-900">Find Affiliates</h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Connect with top-performing affiliates across various industries
               </p>
             </div>
-          </div>
-        </AnimatedContent>
-        
-        <div className="container py-8">
-          {showFilters && (
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle>Filters</CardTitle>
-                <CardDescription>Refine your search with these filters</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Category</label>
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
 
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <label className="text-sm font-medium">Commission Rate Range</label>
-                      <span className="text-sm text-muted-foreground">
-                        {commissionRange[0]}% - {commissionRange[1]}%
-                      </span>
-                    </div>
+            {/* Search and Filter Section */}
+            <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <Input
+                  placeholder="Search affiliates..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="md:w-auto w-full"
+                >
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
+
+              {showFilters && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="space-y-2">
+                    <label className="text-sm text-gray-600">Commission Range (%)</label>
                     <Slider
-                      defaultValue={[0, 30]}
+                      min={0}
                       max={30}
                       step={1}
                       value={commissionRange}
                       onValueChange={setCommissionRange}
+                      className="py-4"
                     />
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>{commissionRange[0]}%</span>
+                      <span>{commissionRange[1]}%</span>
+                    </div>
                   </div>
                 </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchQuery("")
-                    setSelectedCategory("All Categories")
-                    setCommissionRange([0, 30])
-                    setFilteredAffiliates(affiliates)
-                  }}
+              )}
+            </div>
+
+            {/* Affiliates Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAffiliates.map((affiliate) => (
+                <Card 
+                  key={affiliate.id} 
+                  className="h-full bg-gradient-to-br from-gray-800 to-gray-900 hover:shadow-xl transition-all duration-300 border-gray-700 group"
                 >
-                  Reset Filters
-                </Button>
-                <Button onClick={applyFilters}>Apply Filters</Button>
-              </CardFooter>
-            </Card>
-          )}
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAffiliates.map((affiliate) => (
-              <Card key={affiliate.id} className="overflow-hidden">
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start">
-                    <Badge variant="outline">{affiliate.expertise}</Badge>
-                    <Badge variant="secondary">{affiliate.category}</Badge>
-                  </div>
-                  <div className="flex items-center gap-4 mt-4">
-                    <Avatar className="h-16 w-16 border-2 border-primary/10">
-                      <AvatarImage src={affiliate.avatar} alt={affiliate.name} />
-                      <AvatarFallback>{affiliate.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-xl flex items-center gap-2">
-                        {affiliate.name}
-                        {affiliate.verified && (
-                          <Badge variant="outline" className="h-5 text-xs">
-                            Verified
-                          </Badge>
-                        )}
-                      </CardTitle>
-                      <CardDescription className="text-sm">Affiliate Marketer</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-3">
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{affiliate.description}</p>
-
-                  <div className="grid grid-cols-3 gap-2 text-sm mb-4">
-                    {Object.entries(affiliate.metrics).map(([key, value]) => (
-                      <div key={key} className="flex flex-col">
-                        <span className="text-muted-foreground capitalize">
-                          {key.replace(/([A-Z])/g, " $1").trim()}
-                        </span>
-                        <span className="font-medium">{value}</span>
+                  <CardHeader>
+                    <div className="flex items-center gap-4">
+                      <Avatar className="h-12 w-12 border-2 border-gray-600 ring-2 ring-gray-500/20">
+                        <AvatarImage src={affiliate.avatar} alt={affiliate.name} />
+                        <AvatarFallback className="bg-gray-700 text-gray-200">{affiliate.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <CardTitle className="flex items-center gap-2 text-gray-100">
+                          {affiliate.name}
+                          {affiliate.verified && (
+                            <Badge variant="secondary" className="bg-gray-700 text-gray-200 border border-gray-600">
+                              Verified
+                            </Badge>
+                          )}
+                        </CardTitle>
+                        <CardDescription className="text-gray-400">{affiliate.expertise}</CardDescription>
                       </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < Math.floor(affiliate.rating) ? "text-yellow-500" : "text-gray-300"
-                          }`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 15.585l-7.07 3.707 1.35-7.87-5.72-5.573 7.91-1.149L10 0l3.53 7.7 7.91 1.149-5.72 5.573 1.35 7.87L10 15.585z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-400 text-sm mb-4">{affiliate.description}</p>
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      {Object.entries(affiliate.metrics).map(([key, value]) => (
+                        <div key={key} className="bg-gray-800/50 p-3 rounded-lg border border-gray-700 group-hover:border-gray-600 transition-colors">
+                          <div className="text-gray-200 font-semibold">{value}</div>
+                          <div className="text-gray-500 text-xs capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                        </div>
                       ))}
                     </div>
-                    <span className="text-sm font-medium">{affiliate.rating}</span>
-                    <span className="text-xs text-muted-foreground">({affiliate.reviews} reviews)</span>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1">
-                    {affiliate.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center border-t pt-4">
-                  <div>
-                    <p className="text-sm font-medium">{affiliate.commissionRate}</p>
-                    <p className="text-xs text-muted-foreground">{affiliate.commissionModel}</p>
-                  </div>
-                  <Link href={`/affiliates/${affiliate.id}`}>
-                    <Button size="sm" className="gap-1">
-                      <Eye className="h-3.5 w-3.5" />
-                      View Profile
+                    <div className="flex flex-wrap gap-2">
+                      {affiliate.tags.map((tag) => (
+                        <Badge 
+                          key={tag} 
+                          variant="secondary" 
+                          className="bg-gray-800 text-gray-300 border border-gray-700 hover:bg-gray-700 transition-colors"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center border-t border-gray-700 pt-4">
+                    <div>
+                      <div className="text-2xl font-bold text-gray-200">
+                        {affiliate.commissionRate}
+                      </div>
+                      <div className="text-sm text-gray-400">{affiliate.commissionModel}</div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      asChild
+                      className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100 transition-colors"
+                    >
+                      <Link href={`/affiliates/${affiliate.id}`}>
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Profile
+                      </Link>
                     </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-
-          {filteredAffiliates.length === 0 && (
-            <div className="text-center py-12">
-              <h3 className="text-lg font-medium mb-2">No affiliates found</h3>
-              <p className="text-muted-foreground">Try adjusting your filters or search query</p>
+                  </CardFooter>
+                </Card>
+              ))}
             </div>
-          )}
-        </div>
+          </div>
+        </AnimatedContent>
       </PageContainer>
       <Footer />
     </div>

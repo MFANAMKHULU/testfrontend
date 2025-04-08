@@ -2,16 +2,33 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, Globe, Mail, MessageSquare, Users } from "lucide-react"
+import { Eye, Globe, Mail, MessageSquare, Users, LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { AnimatedCard } from "@/components/animated-card"
 import { ParallaxSection } from "@/components/parallax-section"
 import { AnimatedContent } from "@/components/animated-content"
 import { AnimatedButton } from "@/components/animated-button"
 import { motion } from "framer-motion"
+import { Filter } from "@/components/ui/filter"
+import { useState } from "react"
+
+interface FeaturedSpace {
+  id: number
+  title: string
+  description: string
+  type: string
+  icon: LucideIcon
+  metrics: {
+    [key: string]: string
+  }
+  price: string
+  priceModel: string
+  category: string
+  tags: string[]
+}
 
 // Sample data for featured ad spaces
-const featuredSpaces = [
+const featuredSpaces: FeaturedSpace[] = [
   {
     id: 1,
     title: "Tech Blog Premium Banner",
@@ -78,7 +95,17 @@ const featuredSpaces = [
   },
 ]
 
+// Extract unique categories
+const categories = Array.from(new Set(featuredSpaces.map(space => space.category)))
+
 export function FeaturedSpaces() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+
+  // Filter spaces based on selected category
+  const filteredSpaces = selectedCategory
+    ? featuredSpaces.filter(space => space.category === selectedCategory)
+    : featuredSpaces
+
   return (
     <section className="section-padding relative py-20">
       {/* Background gradient to match the theme */}
@@ -103,15 +130,22 @@ export function FeaturedSpaces() {
         </ParallaxSection>
 
         <div className="container-narrow">
+          <Filter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            className="justify-center"
+          />
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredSpaces.map((space, index) => (
+            {filteredSpaces.map((space, index) => (
               <AnimatedContent key={space.id} delay={index * 0.1}>
                 <AnimatedCard intensity={10}>
                   <Card className="overflow-hidden h-full border border-[#2a2e45] bg-[#1a1e32]/80 backdrop-blur-sm">
                     <CardHeader className="pb-3">
                       <div className="flex justify-between items-start">
                         <div className="bg-[#9575ff]/20 p-2 rounded-lg">
-                          <space.icon className="h-5 w-5 text-[#9575ff]" />
+                          {space.icon && <space.icon className="h-5 w-5 text-[#9575ff]" />}
                         </div>
                         <Badge variant="outline" className="border-[#2a2e45] text-gray-300">{space.type}</Badge>
                       </div>

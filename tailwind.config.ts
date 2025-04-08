@@ -150,6 +150,10 @@ const config = {
             opacity: "0",
           },
         },
+        "card-zoom": {
+          "0%, 100%": { transform: "scale(0.8)" },
+          "50%": { transform: "scale(1.3)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -159,6 +163,7 @@ const config = {
         float: "float 6s ease-in-out infinite",
         "spin-slow": "spin-slow 15s linear infinite",
         "button-glow": "button-glow 2s ease-in-out infinite",
+        "card-zoom": "card-zoom 3s ease-in-out infinite",
       },
       fontFamily: {
         sans: ["Calibri", "Segoe UI", "system-ui", "sans-serif"],

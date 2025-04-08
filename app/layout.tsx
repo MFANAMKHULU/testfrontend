@@ -2,6 +2,7 @@ import "@/app/globals.css"
 import { Metadata } from "next"
 import { ChatBot } from "@/components/chat-bot"
 import { LoadingProvider } from "@/providers/loading-provider"
+import { StarsBackground } from "@/components/stars-background"
 
 export const metadata: Metadata = {
   title: "Adsy - AI-Powered Advertising Platform",
@@ -25,6 +26,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <LoadingProvider>
+          <StarsBackground />
           {children}
         </LoadingProvider>
         <ChatBot />

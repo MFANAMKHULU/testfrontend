@@ -25,6 +25,7 @@ const buttonVariants = cva(
           "bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-md hover:shadow-lg hover:bg-gradient-to-r hover:from-primary-400 hover:to-secondary-400",
         "accent-gradient":
           "bg-gradient-to-r from-accent-500 to-accent-700 text-accent-foreground shadow-md hover:shadow-lg",
+        "flashing-orange": "bg-orange-500 text-white shadow-md border-4 border-orange-400 animate-[flash_1.5s_ease-in-out_infinite] hover:bg-orange-600 hover:border-orange-300",
       },
       size: {
         default: "h-10 px-4 py-2",
