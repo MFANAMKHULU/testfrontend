@@ -21,7 +21,7 @@ import {
 import Link from "next/link"
 import { AnimatedBorderCard } from "@/components/ui/animated-border-card"
 import { motion } from "framer-motion"
-import DisplayCards from "@/components/ui/display-cards"
+import { DisplayCards } from "@/components/ui/display-cards"
 import { useState } from "react"
 import { Meteors } from "@/components/ui/meteors"
 import { Switch } from "@/components/ui/switch"
