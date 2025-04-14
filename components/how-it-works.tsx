@@ -78,10 +78,10 @@ const steps = [
 export function HowItWorks() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#32147f]/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-transparent" />
       <Meteors number={20} className="absolute inset-0" />
-      <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8 bg-gradient-to-br from-[#32147f] via-[#140047] to-[#140047] font-['Calibri',sans-serif] relative">
-      <motion.div
+      <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8 bg-transparent font-['Calibri',sans-serif] relative">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -100,13 +100,13 @@ export function HowItWorks() {
                 mass: 1
               }
             }}
-        viewport={{ once: true }}
+            viewport={{ once: true }}
           >
             How It Works
           </motion.h2>
-              <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Discover how our platform has transformed advertising for businesses and creators alike
-              </p>
+          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -119,8 +119,8 @@ export function HowItWorks() {
               className="relative"
             >
               {/* Card content */}
-              <div className="relative p-4 bg-[#140047]/80 backdrop-blur-xl rounded-lg border border-[#32147f]/40 shadow-[0_0_20px_rgba(50,20,127,0.4)] hover:shadow-[0_0_30px_rgba(50,20,127,0.6)] transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#32147f]/40 to-transparent rounded-lg" />
+              <div className="relative p-4 bg-black/50 backdrop-blur-xl rounded-lg border border-gray-700/40 shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_30px_rgba(0,0,0,0.6)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-transparent rounded-lg" />
                 <div className="relative">
                   <h3 className="text-lg font-bold mb-4 text-white">{section.title}</h3>
                   <div className="space-y-3">
@@ -133,10 +133,10 @@ export function HowItWorks() {
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
                           whileHover={{ scale: 1.02 }}
-                          className="flex items-start gap-2 group hover:bg-[#32147f]/30 p-2 rounded-md transition-all duration-300"
+                          className="flex items-start gap-2 group hover:bg-black/30 p-2 rounded-md transition-all duration-300"
                         >
-            <motion.div
-                            className="flex-shrink-0 w-8 h-8 rounded-md bg-gradient-to-br from-[#32147f] to-[#4a1fb8] flex items-center justify-center text-white group-hover:scale-110 group-hover:from-[#9575ff] group-hover:to-[#b388ff] transition-all duration-300 shadow-[0_0_10px_rgba(149,117,255,0.3)]"
+                          <motion.div
+                            className="flex-shrink-0 w-8 h-8 rounded-md bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center text-white group-hover:scale-110 group-hover:from-[#9575ff] group-hover:to-[#b388ff] transition-all duration-300 shadow-[0_0_10px_rgba(149,117,255,0.3)]"
                             whileHover={{ rotate: 360 }}
                             transition={{ duration: 0.5 }}
                           >

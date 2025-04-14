@@ -114,7 +114,10 @@ const adSpace = {
 
 export default function AdSpaceDetailPage({ params }: { params: { id: string } }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="relative shrink-0 min-h-screen flex flex-col">
+      <video className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline disablePictureInPicture>
+        <source src="/thunder.mp4" type="video/mp4" />  
+      </video>
       <Navbar />
       <main className="flex-1">
         <div className="container py-8">

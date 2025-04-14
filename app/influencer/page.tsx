@@ -61,7 +61,6 @@ import {
 } from "@/components/ui/tooltip"
 import { AnimatedPosts } from "@/app/components/ui/animated-testimonials"
 import { AnimatedText } from "@/components/ui/animated-text"
-import { TypingText } from "@/app/components/ui/typing-text"
 
 const cardVariants = {
   hidden: {

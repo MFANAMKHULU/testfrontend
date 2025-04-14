@@ -1,25 +1,62 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
-import { Eye, Filter, Globe, Mail, MessageSquare, Users, Star, StarHalf } from "lucide-react"
+import { Eye, Filter, Instagram, Youtube, Twitter, Globe, Twitch, Check, Star, MessageSquare, Calendar, Clock, BarChart2, ShieldCheck, Heart, Share2, Mail, Users, StarHalf } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { AnimatedContent } from "@/components/animated-content"
-import { AnimatedList } from "@/components/animated-list"
-import { AnimatedCard } from "@/components/animated-card"
-import { AnimatedButton } from "@/components/animated-button"
-import { AnimatedInput } from "@/components/animated-input"
-import { motion } from "framer-motion"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PageContainer } from "@/components/page-container"
-import { CategoryCarousel } from "@/components/category-carousel"
+import { VideoBackground } from "@/components/ui/video-background"
+import { AnimatePresence, motion } from "framer-motion"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+
+// Define types
+type Metrics = {
+  visitors?: string;
+  impressions?: string;
+  ctr?: string;
+  subscribers?: string;
+  openRate?: string;
+  clickRate?: string;
+  users?: string;
+  sessions?: string;
+  engagement?: string;
+  followers?: string;
+  reach?: string;
+  listeners?: string;
+  downloads?: string;
+  completion?: string;
+  views?: string;
+  watchTime?: string;
+}
+
+type AdSpace = {
+  id: number;
+  title: string;
+  description: string;
+  type: string;
+  icon: any; // LucideIcon type
+  rating: number;
+  metrics: Metrics;
+  price: number;
+  priceModel: string;
+  category: string;
+  tags: string[];
+  avatar?: string;
+  name?: string;
+  verified?: boolean;
+  platform?: string;
+}
 
 // Sample data for ad spaces
-const adSpaces = [
+const adSpaces: AdSpace[] = [
   {
     id: 1,
     title: "Tech Blog Premium Banner",
@@ -195,25 +232,472 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function AdSpacesPage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0F0B2C] via-[#1a1145] to-[#2a1760]">
-      <Navbar />
-        <PageContainer>
-        <div className="py-8">
-          <div className="flex flex-col gap-8">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold text-white mb-4">Discover Ad Spaces</h1>
-              <p className="text-white/70 max-w-2xl mx-auto">
-                Find the perfect advertising space for your brand across various platforms and categories
-              </p>
-            </div>
+  const [currentTaglineIndex, setCurrentTaglineIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [favoriteAdSpaces, setFavoriteAdSpaces] = useState<Set<number>>(new Set());
+  const [selectedAdSpace, setSelectedAdSpace] = useState<AdSpace | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  const text = "Discover Ad Spaces";
+  const typingSpeed = 100;
+  const deletingSpeed = 50;
+  const pauseTime = 2000;
+  
+  const taglines = [
+    "Find the perfect advertising space for your brand",
+    "Connect with premium ad spaces across various platforms",
+    "Discover advertising opportunities that match your target audience",
+    "Access a curated selection of high-performing ad spaces"
+  ];
 
-            {/* Category Carousel */}
-            <CategoryCarousel adSpaces={adSpaces} />
-          </div>
-          </div>
-        </PageContainer>
-      <Footer />
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTaglineIndex((prevIndex) => (prevIndex + 1) % taglines.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
+    if (!isDeleting && currentIndex < text.length) {
+      timeout = setTimeout(() => {
+        setDisplayText(text.substring(0, currentIndex + 1));
+        setCurrentIndex(currentIndex + 1);
+      }, typingSpeed);
+    } else if (isDeleting && currentIndex > 0) {
+      timeout = setTimeout(() => {
+        setDisplayText(text.substring(0, currentIndex - 1));
+        setCurrentIndex(currentIndex - 1);
+      }, deletingSpeed);
+    } else if (!isDeleting && currentIndex === text.length) {
+      timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, pauseTime);
+    } else if (isDeleting && currentIndex === 0) {
+      timeout = setTimeout(() => {
+        setIsDeleting(false);
+      }, pauseTime);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [currentIndex, isDeleting]);
+
+  // Filter ad spaces based on search query, category, and price range
+  const filteredAdSpaces = adSpaces.filter((adSpace) => {
+    const matchesSearch = adSpace.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         adSpace.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = selectedCategory === "All Categories" || 
+                           adSpace.category === selectedCategory;
+    
+    const matchesPrice = adSpace.price >= priceRange[0] && adSpace.price <= priceRange[1];
+    
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
+
+  const toggleFavorite = (adSpaceId: number) => {
+    setFavoriteAdSpaces(prev => {
+      const newFavorites = new Set(prev);
+      if (newFavorites.has(adSpaceId)) {
+        newFavorites.delete(adSpaceId);
+      } else {
+        newFavorites.add(adSpaceId);
+      }
+      return newFavorites;
+    });
+  };
+
+  const toggleExpand = (adSpaceId: number) => {
+    setExpandedCard(expandedCard === adSpaceId ? null : adSpaceId);
+  };
+
+  const handleViewProfile = (adSpace: AdSpace) => {
+    setSelectedAdSpace(adSpace);
+    setIsProfileOpen(true);
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col relative">
+      <VideoBackground />
+      <div className="relative z-10 bg-black/50 flex-1 flex flex-col min-h-screen">
+          <Navbar />
+        <PageContainer className="flex-1">
+            <div className="py-8">
+            <div className="relative shrink-0 flex flex-col gap-8 py-20">
+              <video 
+                className="fixed top-0 left-0 w-full h-full object-cover -z-10"
+                autoPlay
+                muted
+                loop
+                playsInline
+                disablePictureInPicture
+              >
+                <source src="/images/adspace2.mp4" type="video/mp4" />
+              </video>
+              <div className="text-center py-5">
+                <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">
+                  {displayText}
+                  <span className="animate-pulse">|</span>
+                </h1>
+                  <div className="h-20 md:h-24 flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={currentTaglineIndex}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.5 }}
+                        className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-medium"
+                      >
+                        {taglines[currentTaglineIndex]}
+                      </motion.p>
+                    </AnimatePresence>
+                  </div>
+                  </div>
+                </div>
+
+            {/* Search and Filter Section */}
+            <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <Input
+                  placeholder="Search ad spaces..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="flex-1"
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="md:w-auto w-full"
+                >
+                  <Filter className="w-4 h-4 mr-2" />
+                  Filters
+                </Button>
+              </div>
+
+              {showFilters && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="space-y-2">
+                    <label className="text-sm text-gray-600">Price Range (R)</label>
+                    <Slider
+                      min={0}
+                      max={10000}
+                      step={100}
+                      value={priceRange}
+                      onValueChange={setPriceRange}
+                      className="py-4"
+                    />
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span>R{priceRange[0]}</span>
+                      <span>R{priceRange[1]}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+                </div>
+
+            {/* Ad Spaces Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAdSpaces.map((adSpace) => (
+                <motion.div
+                  key={adSpace.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <Card 
+                    className={`bg-background/80 backdrop-blur-sm transition-all duration-300 ${
+                      expandedCard === adSpace.id ? 'md:col-span-2 lg:col-span-3' : ''
+                    }`}
+                  >
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12 border-2 border-primary/10">
+                            <AvatarImage src={adSpace.avatar} alt={adSpace.name || adSpace.title} />
+                            <AvatarFallback className="bg-gray-700 text-gray-200">
+                              {(adSpace.name || adSpace.title)[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <CardTitle className="flex items-center gap-2 text-gray-100">
+                              {adSpace.name || adSpace.title}
+                              {adSpace.verified && (
+                                <Badge variant="secondary" className="bg-gray-700 text-gray-200 border border-gray-600">
+                                  Verified
+                                </Badge>
+                              )}
+                            </CardTitle>
+                            <CardDescription className="text-gray-400">{adSpace.platform || adSpace.type}</CardDescription>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            onClick={() => toggleFavorite(adSpace.id)}
+                            className="hover:bg-gray-800/50"
+                          >
+                            <Heart 
+                              className={`h-4 w-4 ${
+                                favoriteAdSpaces.has(adSpace.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                              }`}
+                            />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="hover:bg-gray-800/50"
+                          >
+                            <Share2 className="h-4 w-4 text-gray-400" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-400 text-sm mb-4">{adSpace.description}</p>
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        {Object.entries(adSpace.metrics).map(([key, value]) => (
+                          <motion.div 
+                            key={key} 
+                            className="bg-muted/50 p-3 rounded-lg hover:bg-muted/70 transition-colors"
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            <div className="text-gray-200 font-semibold">{value}</div>
+                            <div className="text-gray-500 text-xs capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                          </motion.div>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {adSpace.tags.map((tag) => (
+                          <Badge 
+                            key={tag} 
+                            variant="secondary" 
+                            className="bg-muted/50 text-gray-300 hover:bg-muted/70 transition-colors"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      {expandedCard === adSpace.id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="mt-6 space-y-4"
+                        >
+                          <div className="border-t border-gray-700 pt-4">
+                            <h4 className="text-lg font-semibold text-gray-200 mb-2">Recent Performance</h4>
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="bg-muted/50 p-3 rounded-lg">
+                                <div className="text-gray-200 font-semibold">+15%</div>
+                                <div className="text-gray-500 text-xs">Engagement Rate</div>
+                              </div>
+                              <div className="bg-muted/50 p-3 rounded-lg">
+                                <div className="text-gray-200 font-semibold">R45,000</div>
+                                <div className="text-gray-500 text-xs">Monthly Revenue</div>
+                              </div>
+                              <div className="bg-muted/50 p-3 rounded-lg">
+                                <div className="text-gray-200 font-semibold">98%</div>
+                                <div className="text-gray-500 text-xs">Success Rate</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="border-t border-gray-700 pt-4">
+                            <h4 className="text-lg font-semibold text-gray-200 mb-2">Top Performing Campaigns</h4>
+                            <div className="space-y-2">
+                              {['Summer Sale 2023', 'Black Friday Special', 'New Year Promotion'].map((campaign) => (
+                                <div key={campaign} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
+                                  <span className="text-gray-300">{campaign}</span>
+                                  <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                                    +25% ROI
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </CardContent>
+                    <CardFooter className="flex justify-between items-center border-t border-gray-700 pt-4">
+                      <div>
+                        <div className="text-2xl font-bold text-gray-200">
+                          {adSpace.price}
+                        </div>
+                        <div className="text-sm text-gray-400">{adSpace.priceModel}</div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => toggleExpand(adSpace.id)}
+                          className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100 transition-colors"
+                        >
+                          {expandedCard === adSpace.id ? 'Show Less' : 'Show More'}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => handleViewProfile(adSpace)}
+                          className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100 transition-colors"
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Profile
+                        </Button>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
+              ))}
+              </div>
+            </div>
+          </PageContainer>
+        <div className="mt-auto">
+          <Footer />
+        </div>
+      </div>
+
+      <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+        <DialogContent className="max-w-4xl bg-background/95 backdrop-blur-sm border-gray-700">
+          {selectedAdSpace && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-20 w-20 border-2 border-primary/10">
+                    <AvatarImage src={selectedAdSpace.avatar} alt={selectedAdSpace.name || selectedAdSpace.title} />
+                    <AvatarFallback className="bg-gray-700 text-gray-200 text-2xl">
+                      {(selectedAdSpace.name || selectedAdSpace.title)[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <DialogTitle className="flex items-center gap-2 text-2xl text-gray-100">
+                      {selectedAdSpace.name || selectedAdSpace.title}
+                      {selectedAdSpace.verified && (
+                        <Badge variant="secondary" className="bg-gray-700 text-gray-200 border border-gray-600">
+                          Verified
+                        </Badge>
+                      )}
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400 text-lg">
+                      {selectedAdSpace.platform || selectedAdSpace.type}
+                    </DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">About</h3>
+                    <p className="text-gray-400">{selectedAdSpace.description}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Performance Metrics</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.entries(selectedAdSpace.metrics).map(([key, value]) => (
+                        <div key={key} className="bg-muted/50 p-4 rounded-lg">
+                          <div className="text-gray-200 font-semibold text-xl">{value}</div>
+                          <div className="text-gray-500 text-sm capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Expertise</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedAdSpace.tags.map((tag) => (
+                        <Badge 
+                          key={tag} 
+                          variant="secondary" 
+                          className="bg-muted/50 text-gray-300"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Pricing Details</h3>
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <div className="text-3xl font-bold text-gray-200 mb-1">
+                        {selectedAdSpace.price}
+                      </div>
+                      <div className="text-gray-400">{selectedAdSpace.priceModel}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Recent Performance</h3>
+                    <div className="space-y-3">
+                      {['Engagement Rate', 'Monthly Revenue', 'Success Rate'].map((metric) => (
+                        <div key={metric} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
+                          <span className="text-gray-300">{metric}</span>
+                          <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                            {metric === 'Monthly Revenue' ? 'R9,800' : '+15%'}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Top Campaigns</h3>
+                    <div className="space-y-2">
+                      {['Summer Sale 2023', 'Black Friday Special', 'New Year Promotion'].map((campaign) => (
+                        <div key={campaign} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
+                          <span className="text-gray-300">{campaign}</span>
+                          <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                            +25% ROI
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  Close
+                </Button>
+                <Button className="bg-primary hover:bg-primary/90">
+                  Start Collaboration
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

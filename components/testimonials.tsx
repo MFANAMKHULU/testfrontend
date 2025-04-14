@@ -17,11 +17,12 @@ export function Testimonials() {
   return (
     <section className="relative py-20 overflow-hidden">
       {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#140047] via-[#1a0066] to-[#200080] opacity-90" />
+      <div className="absolute inset-0 bg-transparent" />
       
       {/* Parallax section */}
-      <div className="relative z-10">
-          <motion.div
+      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Title */}
+        <motion.div
           initial={{ opacity: 0, y: -100 }}
           whileInView={{ 
             opacity: 1, 
