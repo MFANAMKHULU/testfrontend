@@ -129,25 +129,57 @@ export default function InfluencerDetailPage({ params }: { params: { id: string 
     <div className="min-h-screen relative">
       <VideoBackground />
       <div className="relative z-10 bg-black/50">
-      <Navbar />
+        <Navbar />
         <PageContainer>
           <div className="py-8">
             <div className="relative shrink-0 flex flex-col gap-8 py-20">
-              <video className="w-full h-full object-cover absolute -z-10"
+              <video 
+                className="w-full h-full object-cover absolute -z-10"
                 autoPlay
                 muted
-              loop
-              playsInline
-              disablePictureInPicture
-            >
-              <source src="/images/influencer.mp4" type="video/mp4" />
-            </video>
-
+                loop
+                playsInline
+                disablePictureInPicture
+              >
+                <source src="/images/influencer.mp4" type="video/mp4" />
+              </video>
+              
+              <div className="flex items-start gap-8">
+                <Avatar className="w-32 h-32">
+                  <AvatarImage src={influencer.avatar} alt={influencer.name} />
+                  <AvatarFallback>{influencer.name[0]}</AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1">
+                  <div className="flex items-center gap-4">
+                    <h1 className="text-4xl font-bold text-white">{influencer.name}</h1>
+                    {influencer.verified && (
+                      <Badge variant="secondary" className="bg-blue-500">
+                        <ShieldCheck className="w-4 h-4 mr-1" />
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-gray-300 mt-2">{influencer.handle}</p>
+                  <p className="text-gray-300 mt-4">{influencer.description}</p>
+                  
+                  <div className="flex gap-4 mt-6">
+                    <Button variant="outline" className="text-white">
+                      <MessageSquare className="w-4 h-4 mr-2" />
+                      Contact
+                    </Button>
+                    <Button variant="outline" className="text-white">
+                      <Share2 className="w-4 h-4 mr-2" />
+                      Share
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </PageContainer>
         <Footer />
-                </div>
-              </div>
-
+      </div>
+    </div>
   );
 }
