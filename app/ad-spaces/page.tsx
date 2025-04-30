@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
-import { Eye, Filter, Instagram, Youtube, Twitter, Globe, Twitch, Check, Star, MessageSquare, Calendar, Clock, BarChart2, ShieldCheck, Heart, Share2, Mail, Users, StarHalf } from "lucide-react"
+import { Eye, Filter, Instagram, Youtube, Twitter, Globe, Twitch, Check, Star, MessageSquare, Calendar, Clock, BarChart2, ShieldCheck, Heart, Share2, Mail, Users, StarHalf, BadgeCheck, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -16,6 +16,9 @@ import { PageContainer } from "@/components/page-container"
 import { VideoBackground } from "@/components/ui/video-background"
 import { AnimatePresence, motion } from "framer-motion"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { GlareCard } from "@/components/ui/glare-card"
+import { Button as MovingBorderButton } from "@/components/ui/moving-border"
+import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel"
 
 // Define types
 type Metrics = {
@@ -236,10 +239,6 @@ export default function AdSpacesPage() {
   const [displayText, setDisplayText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
-  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [favoriteAdSpaces, setFavoriteAdSpaces] = useState<Set<number>>(new Set());
   const [selectedAdSpace, setSelectedAdSpace] = useState<AdSpace | null>(null);
@@ -291,18 +290,8 @@ export default function AdSpacesPage() {
     return () => clearTimeout(timeout);
   }, [currentIndex, isDeleting]);
 
-  // Filter ad spaces based on search query, category, and price range
-  const filteredAdSpaces = adSpaces.filter((adSpace) => {
-    const matchesSearch = adSpace.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         adSpace.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = selectedCategory === "All Categories" || 
-                           adSpace.category === selectedCategory;
-    
-    const matchesPrice = adSpace.price >= priceRange[0] && adSpace.price <= priceRange[1];
-    
-    return matchesSearch && matchesCategory && matchesPrice;
-  });
+  // Remove the filter function and use all ad spaces directly
+  const filteredAdSpaces = adSpaces;
 
   const toggleFavorite = (adSpaceId: number) => {
     setFavoriteAdSpaces(prev => {
@@ -365,214 +354,16 @@ export default function AdSpacesPage() {
                   </div>
                 </div>
 
-            {/* Search and Filter Section */}
-            <div className="bg-white rounded-lg shadow-sm p-6 space-y-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <Input
-                  placeholder="Search ad spaces..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1"
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="md:w-auto w-full"
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filters
-                </Button>
-              </div>
-
-              {showFilters && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
-                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="space-y-2">
-                    <label className="text-sm text-gray-600">Price Range (R)</label>
-                    <Slider
-                      min={0}
-                      max={10000}
-                      step={100}
-                      value={priceRange}
-                      onValueChange={setPriceRange}
-                      className="py-4"
-                    />
-                    <div className="flex justify-between text-sm text-gray-600">
-                      <span>R{priceRange[0]}</span>
-                      <span>R{priceRange[1]}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-                </div>
-
             {/* Ad Spaces Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAdSpaces.map((adSpace) => (
-                <motion.div
-                  key={adSpace.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  whileHover={{ scale: 1.02 }}
-                >
-                  <Card 
-                    className={`bg-background/80 backdrop-blur-sm transition-all duration-300 ${
-                      expandedCard === adSpace.id ? 'md:col-span-2 lg:col-span-3' : ''
-                    }`}
-                  >
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-12 w-12 border-2 border-primary/10">
-                            <AvatarImage src={adSpace.avatar} alt={adSpace.name || adSpace.title} />
-                            <AvatarFallback className="bg-gray-700 text-gray-200">
-                              {(adSpace.name || adSpace.title)[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <CardTitle className="flex items-center gap-2 text-gray-100">
-                              {adSpace.name || adSpace.title}
-                              {adSpace.verified && (
-                                <Badge variant="secondary" className="bg-gray-700 text-gray-200 border border-gray-600">
-                                  Verified
-                                </Badge>
-                              )}
-                            </CardTitle>
-                            <CardDescription className="text-gray-400">{adSpace.platform || adSpace.type}</CardDescription>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => toggleFavorite(adSpace.id)}
-                            className="hover:bg-gray-800/50"
-                          >
-                            <Heart 
-                              className={`h-4 w-4 ${
-                                favoriteAdSpaces.has(adSpace.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'
-                              }`}
-                            />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            className="hover:bg-gray-800/50"
-                          >
-                            <Share2 className="h-4 w-4 text-gray-400" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-400 text-sm mb-4">{adSpace.description}</p>
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        {Object.entries(adSpace.metrics).map(([key, value]) => (
-                          <motion.div 
-                            key={key} 
-                            className="bg-muted/50 p-3 rounded-lg hover:bg-muted/70 transition-colors"
-                            whileHover={{ scale: 1.05 }}
-                          >
-                            <div className="text-gray-200 font-semibold">{value}</div>
-                            <div className="text-gray-500 text-xs capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-                          </motion.div>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {adSpace.tags.map((tag) => (
-                          <Badge 
-                            key={tag} 
-                            variant="secondary" 
-                            className="bg-muted/50 text-gray-300 hover:bg-muted/70 transition-colors"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      {expandedCard === adSpace.id && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="mt-6 space-y-4"
-                        >
-                          <div className="border-t border-gray-700 pt-4">
-                            <h4 className="text-lg font-semibold text-gray-200 mb-2">Recent Performance</h4>
-                            <div className="grid grid-cols-3 gap-4">
-                              <div className="bg-muted/50 p-3 rounded-lg">
-                                <div className="text-gray-200 font-semibold">+15%</div>
-                                <div className="text-gray-500 text-xs">Engagement Rate</div>
-                              </div>
-                              <div className="bg-muted/50 p-3 rounded-lg">
-                                <div className="text-gray-200 font-semibold">R45,000</div>
-                                <div className="text-gray-500 text-xs">Monthly Revenue</div>
-                              </div>
-                              <div className="bg-muted/50 p-3 rounded-lg">
-                                <div className="text-gray-200 font-semibold">98%</div>
-                                <div className="text-gray-500 text-xs">Success Rate</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="border-t border-gray-700 pt-4">
-                            <h4 className="text-lg font-semibold text-gray-200 mb-2">Top Performing Campaigns</h4>
-                            <div className="space-y-2">
-                              {['Summer Sale 2023', 'Black Friday Special', 'New Year Promotion'].map((campaign) => (
-                                <div key={campaign} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
-                                  <span className="text-gray-300">{campaign}</span>
-                                  <Badge variant="secondary" className="bg-green-500/20 text-green-400">
-                                    +25% ROI
-                                  </Badge>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </CardContent>
-                    <CardFooter className="flex justify-between items-center border-t border-gray-700 pt-4">
-                      <div>
-                        <div className="text-2xl font-bold text-gray-200">
-                          {adSpace.price}
-                        </div>
-                        <div className="text-sm text-gray-400">{adSpace.priceModel}</div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          onClick={() => toggleExpand(adSpace.id)}
-                          className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100 transition-colors"
-                        >
-                          {expandedCard === adSpace.id ? 'Show Less' : 'Show More'}
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => handleViewProfile(adSpace)}
-                          className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100 transition-colors"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          View Profile
-                        </Button>
-                      </div>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))}
+            <div className="w-full max-w-4xl mx-auto">
+              <div className="min-h-[500px] flex flex-col justify-center border border-dashed rounded-lg space-y-4">
+                <div className="p-2">
+                  <ThreeDPhotoCarousel cards={filteredAdSpaces} />
+                </div>
               </div>
             </div>
-          </PageContainer>
+          </div>
+        </PageContainer>
         <div className="mt-auto">
           <Footer />
         </div>

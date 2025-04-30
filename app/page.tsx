@@ -59,7 +59,7 @@ export default function Home() {
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [expandedCard, setExpandedCard] = useState<number | null>(null)
   const [favoriteAdSpaces, setFavoriteAdSpaces] = useState<Set<number>>(new Set())
-  const [selectedAdSpace, setSelectedAdSpace] = useState<AdSpace | null>(null)
+  const [selectedAdSpace, setSelectedAdSpace] = useState<number | null>(null) // Changed AdSpace to number
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   
   const text = "Discover Ad Spaces"
@@ -146,7 +146,7 @@ export default function Home() {
                 playsInline
                 disablePictureInPicture
               >
-                <source src="/images/thunder.mp4" type="video/mp4" />
+                <source src="/images/newbg.mp4" type="video/mp4" />
               </video>
               <div className="text-center py-5">
                 <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">

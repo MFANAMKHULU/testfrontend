@@ -8,6 +8,10 @@ import {
   useMotionValue,
   useTransform,
 } from "framer-motion"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Badge, BadgeCheck } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Globe, MessageSquare, ShoppingCart } from "lucide-react"
 
 export const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect
@@ -58,23 +62,6 @@ export function useMediaQuery(
   return matches
 }
 
-const keywords = [
-  "night",
-  "city",
-  "sky",
-  "sunset",
-  "sunrise",
-  "winter",
-  "skyscraper",
-  "building",
-  "cityscape",
-  "architecture",
-  "street",
-  "lights",
-  "downtown",
-  "bridge",
-]
-
 const duration = 0.15
 const transition = { duration, ease: [0.32, 0.72, 0, 1], filter: "blur(4px)" }
 const transitionOverlay = { duration: 0.5, ease: [0.32, 0.72, 0, 1] }
@@ -88,156 +75,144 @@ const Carousel = memo(
   }: {
     handleClick: (imgUrl: string, index: number) => void
     controls: any
-    cards: string[]
+    cards: any[]
     isCarouselActive: boolean
   }) => {
     const isScreenSizeSm = useMediaQuery("(max-width: 640px)")
-    const cylinderWidth = isScreenSizeSm ? 1100 : 1800
+    const cylinderWidth = isScreenSizeSm ? 2200 : 3600
     const faceCount = cards.length
-    const faceWidth = cylinderWidth / faceCount
+    const faceWidth = (cylinderWidth / faceCount) * 0.4
     const radius = cylinderWidth / (2 * Math.PI)
-    const rotation = useMotionValue(0)
-    const transform = useTransform(
-      rotation,
-      (value) => `rotate3d(0, 1, 0, ${value}deg)`
-    )
+    const [rotation, setRotation] = useState(0)
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setRotation(prev => prev + 0.1)
+      }, 16)
+      return () => clearInterval(interval)
+    }, [])
 
     return (
       <div
-        className="flex h-full items-center justify-center bg-background"
+        className="flex h-full items-center justify-center bg-mauve-dark-2"
         style={{
-          perspective: "1000px",
+          perspective: "2000px",
           transformStyle: "preserve-3d",
           willChange: "transform",
         }}
       >
-        <motion.div
-          drag={isCarouselActive ? "x" : false}
-          className="relative flex h-full origin-center cursor-grab justify-center active:cursor-grabbing"
+        <div
+          className="relative flex h-full origin-center justify-center"
           style={{
-            transform,
-            rotateY: rotation,
+            transform: `rotate3d(0, 1, 0, ${rotation}deg)`,
             width: cylinderWidth,
             transformStyle: "preserve-3d",
           }}
-          onDrag={(_, info) =>
-            isCarouselActive &&
-            rotation.set(rotation.get() + info.offset.x * 0.05)
-          }
-          onDragEnd={(_, info) =>
-            isCarouselActive &&
-            controls.start({
-              rotateY: rotation.get() + info.velocity.x * 0.05,
-              transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 30,
-                mass: 0.1,
-              },
-            })
-          }
-          animate={controls}
         >
-          {cards.map((imgUrl, i) => (
-            <motion.div
-              key={`key-${imgUrl}-${i}`}
-              className="absolute flex h-full origin-center items-center justify-center rounded-xl bg-background p-2"
+          {cards.map((card, i) => (
+            <div
+              key={`key-${card.id}-${i}`}
+              className="absolute flex h-full origin-center items-center justify-center rounded-xl bg-mauve-dark-2 p-2"
               style={{
                 width: `${faceWidth}px`,
                 transform: `rotateY(${
                   i * (360 / faceCount)
                 }deg) translateZ(${radius}px)`,
               }}
-              onClick={() => handleClick(imgUrl, i)}
             >
-              <motion.img
-                src={imgUrl}
-                alt={`keyword_${i} ${imgUrl}`}
-                layoutId={`img-${imgUrl}`}
-                className="pointer-events-none w-full rounded-xl object-cover aspect-square"
-                initial={{ filter: "blur(4px)" }}
-                layout="position"
-                animate={{ filter: "blur(0px)" }}
-                transition={transition}
-              />
-            </motion.div>
+              <div
+                className="pointer-events-none w-full rounded-xl bg-background/80 backdrop-blur-sm p-6"
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {card.avatar && (
+                        <Avatar>
+                          <AvatarImage src={card.avatar} alt={card.name} />
+                          <AvatarFallback>{card.name?.[0]}</AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div>
+                        <h3 className="font-semibold text-lg">{card.title}</h3>
+                        {card.name && (
+                          <p className="text-sm text-muted-foreground">
+                            {card.name}
+                            {card.verified && (
+                              <BadgeCheck className="w-4 h-4 ml-1 inline-block text-blue-500" />
+                            )}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="text-sm text-muted-foreground">
+                        {card.platform && (
+                          <span className="flex items-center gap-1">
+                            <Globe className="w-4 h-4" />
+                            {card.platform}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">{card.description}</p>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    {Object.entries(card.metrics).map(([key, value]) => (
+                      <div key={key} className="flex flex-col">
+                        <span className="text-sm text-muted-foreground">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                        <span className="font-semibold">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-auto">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <span className="text-2xl font-bold">${card.price}</span>
+                        <span className="text-sm text-muted-foreground ml-1">
+                          /{card.priceModel}
+                        </span>
+                      </div>
+                      <Badge variant="secondary">{card.category}</Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {card.tags.map((tag, i) => (
+                        <Badge key={i} variant="outline">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" className="flex-1">
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Contact
+                      </Button>
+                      <Button className="flex-1">
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        Purchase
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     )
   }
 )
 
-const hiddenMask = `repeating-linear-gradient(to right, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 30px, rgba(0,0,0,1) 30px, rgba(0,0,0,1) 30px)`
-const visibleMask = `repeating-linear-gradient(to right, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 0px, rgba(0,0,0,1) 0px, rgba(0,0,0,1) 30px)`
-
-function ThreeDPhotoCarousel() {
-  const [activeImg, setActiveImg] = useState<string | null>(null)
-  const [isCarouselActive, setIsCarouselActive] = useState(true)
-  const controls = useAnimation()
-  const cards = useMemo(
-    () => keywords.map((keyword) => `https://source.unsplash.com/featured/800x600?${keyword}`),
-    []
-  )
-
-  useEffect(() => {
-    console.log("Cards loaded:", cards)
-  }, [cards])
-
-  const handleClick = (imgUrl: string) => {
-    setActiveImg(imgUrl)
-    setIsCarouselActive(false)
-    controls.stop()
-  }
-
-  const handleClose = () => {
-    setActiveImg(null)
-    setIsCarouselActive(true)
-  }
-
+export function ThreeDPhotoCarousel({ cards }: { cards: any[] }) {
   return (
-    <motion.div layout className="relative">
-      <AnimatePresence mode="sync">
-        {activeImg && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0 }}
-            layoutId={`img-container-${activeImg}`}
-            layout="position"
-            onClick={handleClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 m-5 md:m-36 lg:mx-[19rem] rounded-3xl"
-            style={{ willChange: "opacity" }}
-            transition={transitionOverlay}
-          >
-            <motion.img
-              layoutId={`img-${activeImg}`}
-              src={activeImg}
-              className="max-w-full max-h-full rounded-lg shadow-lg"
-              initial={{ scale: 0.5 }}
-              animate={{ scale: 1 }}
-              transition={{
-                delay: 0.5,
-                duration: 0.5,
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-              style={{
-                willChange: "transform",
-              }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="relative">
       <div className="relative h-[500px] w-full overflow-hidden">
         <Carousel
-          handleClick={handleClick}
-          controls={controls}
+          handleClick={() => {}}
+          controls={{}}
           cards={cards}
-          isCarouselActive={isCarouselActive}
+          isCarouselActive={true}
         />
       </div>
-    </motion.div>
+    </div>
   )
-}
-
-export { ThreeDPhotoCarousel } 
+} 
