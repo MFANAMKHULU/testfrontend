@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PageContainer } from "@/components/page-container"
 import { AnimatedContent } from "@/components/animated-content"
+import { RadialOrbitalTimelineDemo } from "@/components/ui/radial-orbital-timeline-demo"
 
 export default function AboutPage() {
   return (
@@ -54,10 +55,8 @@ export default function AboutPage() {
                   businesses of all sizes grow their reach and revenue.
                 </p>
               </div>
-              <div className="bg-[#1a1f2e] rounded-xl p-8">
-                <div className="aspect-square bg-[#2a2e45] rounded-lg flex items-center justify-center">
-                  <Globe className="h-24 w-24 text-[#9575ff]" />
-                </div>
+              <div className="flex justify-center items-center">
+                <RadialOrbitalTimelineDemo />
               </div>
             </div>
           </div>

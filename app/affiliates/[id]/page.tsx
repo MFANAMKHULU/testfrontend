@@ -44,7 +44,6 @@ const affiliate = {
   category: "Technology",
   tags: ["SaaS", "Marketing Tools", "B2B", "Email Marketing", "CRM", "Analytics"],
   rating: 4.9,
-  reviews: 87,
   verified: true,
   marketingChannels: [
     { channel: "Email Newsletter", subscribers: "45K", openRate: "28%", conversionRate: "3.2%" },
@@ -178,7 +177,7 @@ export default function AffiliateDetailPage({ params }: { params: { id: string }
                         <Star className="h-4 w-4 text-yellow-500 mr-1" />
                         <span>{affiliate.rating}</span>
                         <span className="mx-1">•</span>
-                        <span>{affiliate.reviews} reviews</span>
+                        <span>{affiliate.reviews.length} reviews</span>
                       </div>
                       <span>•</span>
                       <div className="flex items-center">
@@ -372,7 +371,7 @@ export default function AffiliateDetailPage({ params }: { params: { id: string }
                             />
                           ))}
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{affiliate.reviews} reviews</p>
+                        <p className="text-sm text-muted-foreground mt-1">{affiliate.reviews.length} reviews</p>
                       </div>
                       <div className="flex-1">
                         <div className="space-y-1">
