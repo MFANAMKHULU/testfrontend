@@ -19,6 +19,7 @@ interface NavBarProps {
   className?: string
   onSignIn?: () => void
   onSignUp?: () => void
+  rightContent?: React.ReactNode
 }
 
 // Update the keyframes animation
@@ -45,7 +46,7 @@ const keyframes = `
   }
 `
 
-export function NavBar({ items, className, onSignIn, onSignUp }: NavBarProps) {
+export function NavBar({ items, className, onSignIn, onSignUp, rightContent }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
   const [isMobile, setIsMobile] = useState(false)
   const [colorIndex, setColorIndex] = useState(0)
@@ -189,6 +190,7 @@ export function NavBar({ items, className, onSignIn, onSignUp }: NavBarProps) {
         
         {/* Auth Buttons */}
         <div className="flex items-center gap-2">
+          {rightContent}
           <AnimatedButton
             variant="ghost-primary"
             className={cn(

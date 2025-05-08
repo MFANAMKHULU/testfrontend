@@ -7,18 +7,17 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
 import { Badge } from "@/components/ui/badge"
-import { Eye, Filter, Instagram, Youtube, Twitter, Globe, Twitch, Check, Star, MessageSquare, Calendar, Clock, BarChart2, ShieldCheck, Heart, Share2, Mail, Users, StarHalf, BadgeCheck, ShoppingCart } from "lucide-react"
+import { Eye, Filter, Instagram, Youtube, Twitter, Globe, Twitch, Check, Star, MessageSquare, Calendar, Clock, BarChart2, ShieldCheck, Heart, Share2, Mail, Users, StarHalf, BadgeCheck, ShoppingCart, Facebook, Linkedin, Sun, Moon, Zap } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PageContainer } from "@/components/page-container"
-import { VideoBackground } from "@/components/ui/video-background"
 import { AnimatePresence, motion } from "framer-motion"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { GlareCard } from "@/components/ui/glare-card"
 import { Button as MovingBorderButton } from "@/components/ui/moving-border"
-import { ThreeDPhotoCarousel } from "@/components/ui/3d-carousel"
+import { useTheme } from "next-themes"
 
 // Define types
 type Metrics = {
@@ -38,6 +37,29 @@ type Metrics = {
   completion?: string;
   views?: string;
   watchTime?: string;
+  viewsPerVideo?: string;
+  engagementRate?: string;
+  averageWatchTime?: string;
+  averageLikes?: string;
+  storyViews?: string;
+  commentsPerPost?: string;
+  averageRetweets?: string;
+  impressionsPerTweet?: string;
+  connections?: string;
+  averageViews?: string;
+  industryInfluence?: string;
+  averageReach?: string;
+  avgViews?: string;
+  avgWatchTime?: string;
+  avgCPC?: string;
+  avgDownloads?: string;
+  completionRate?: string;
+  avgAdRecall?: string;
+  avgLikes?: string;
+  monthlyReaders?: string;
+  avgSession?: string;
+  bounceRate?: string;
+  topCountries?: string;
 }
 
 type AdSpace = {
@@ -62,140 +84,114 @@ type AdSpace = {
 const adSpaces: AdSpace[] = [
   {
     id: 1,
-    title: "Tech Blog Premium Banner",
-    description: "Top banner position on a tech blog with 500K monthly visitors",
-    type: "Website",
-    icon: Globe,
-    rating: 4.5,
+    title: "Pro Gamer YouTube Channel",
+    description: "Top gaming channel with 2M+ subscribers. Perfect for game launches, eSports, and hardware sponsorships.",
+    type: "video",
+    icon: Youtube,
+    rating: 4.9,
     metrics: {
-      visitors: "500K",
-      impressions: "2.5M",
-      ctr: "3.2%",
+      subscribers: "2M",
+      avgViews: "800K",
+      engagementRate: "9.2%",
+      avgWatchTime: "15:10"
     },
-    price: 1200,
-    priceModel: "per month",
-    category: "Technology",
-    tags: ["Banner", "Tech", "Premium"],
+    price: 7000,
+    priceModel: "per video",
+    category: "Gaming",
+    tags: ["eSports", "PC Gaming", "Live Streams"],
+    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Alex Johnson",
+    verified: true,
+    platform: "YouTube"
   },
   {
     id: 2,
-    title: "Weekly Finance Newsletter",
-    description: "Sponsored section in a finance newsletter with 50K subscribers",
-    type: "Newsletter",
+    title: "Finance Weekly Newsletter",
+    description: "Trusted finance newsletter with 100K+ subscribers. Ideal for fintech, investment, and banking ads.",
+    type: "newsletter",
     icon: Mail,
-    rating: 4.8,
+    rating: 4.7,
     metrics: {
-      subscribers: "50K",
-      openRate: "32%",
-      clickRate: "8.5%",
+      subscribers: "100K",
+      openRate: "38%",
+      clickRate: "12%",
+      avgCPC: "$1.20"
     },
-    price: 800,
+    price: 2500,
     priceModel: "per issue",
     category: "Finance",
-    tags: ["Newsletter", "Finance", "Weekly"],
+    tags: ["Investing", "Fintech", "Banking"],
+    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: "Samantha Lee",
+    verified: false,
+    platform: "Email"
   },
   {
     id: 3,
-    title: "Fitness App In-App Ads",
-    description: "Native in-app advertisements in a fitness app with 200K active users",
-    type: "Mobile App",
+    title: "Business Leaders Podcast",
+    description: "Podcast for entrepreneurs and executives. Reach a high-value B2B audience with your message.",
+    type: "podcast",
     icon: MessageSquare,
-    rating: 4.2,
+    rating: 4.8,
     metrics: {
-      users: "200K",
-      sessions: "1.2M",
-      engagement: "4.5 min",
+      listeners: "50K",
+      avgDownloads: "40K",
+      completionRate: "88%",
+      avgAdRecall: "72%"
     },
-    price: 1500,
-    priceModel: "per week",
-    category: "Health & Fitness",
-    tags: ["Mobile", "In-App", "Fitness"],
+    price: 3500,
+    priceModel: "per episode",
+    category: "Business",
+    tags: ["Entrepreneurship", "Leadership", "B2B"],
+    avatar: "https://randomuser.me/api/portraits/men/85.jpg",
+    name: "Michael Carter",
+    verified: true,
+    platform: "Podcast"
   },
   {
     id: 4,
-    title: "Travel Influencer Promotion",
-    description: "Sponsored content from a travel influencer with 350K followers",
-    type: "Social Media",
-    icon: Users,
-    rating: 4.9,
+    title: "Healthy Living Instagram",
+    description: "Popular wellness Instagram with 300K+ followers. Great for health, fitness, and nutrition brands.",
+    type: "social",
+    icon: Instagram,
+    rating: 4.6,
     metrics: {
-      followers: "350K",
-      engagement: "4.8%",
-      reach: "120K",
+      followers: "300K",
+      engagementRate: "7.5%",
+      avgLikes: "18K",
+      storyViews: "25K"
     },
-    price: 2000,
+    price: 1800,
     priceModel: "per post",
-    category: "Travel",
-    tags: ["Influencer", "Social Media", "Travel"],
+    category: "Health & Fitness",
+    tags: ["Wellness", "Fitness", "Nutrition"],
+    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+    name: "Jessica Smith",
+    verified: false,
+    platform: "Instagram"
   },
   {
     id: 5,
-    title: "Food Blog Sidebar Ad",
-    description: "Sidebar advertisement on a popular food blog with 300K monthly visitors",
-    type: "Website",
+    title: "Travel Explorer Blog",
+    description: "Award-winning travel blog with 500K monthly readers. Perfect for tourism boards and travel products.",
+    type: "website",
     icon: Globe,
-    rating: 4.3,
+    rating: 4.9,
     metrics: {
-      visitors: "300K",
-      impressions: "1.2M",
-      ctr: "2.8%",
+      monthlyReaders: "500K",
+      avgSession: "4:20",
+      bounceRate: "28%",
+      topCountries: "US, UK, AU"
     },
-    price: 750,
+    price: 2200,
     priceModel: "per month",
-    category: "Food & Cooking",
-    tags: ["Sidebar", "Food", "Blog"],
-  },
-  {
-    id: 6,
-    title: "Gaming YouTube Channel",
-    description: "Pre-roll ad on a gaming YouTube channel with 1M subscribers",
-    type: "Video",
-    icon: Users,
-    rating: 4.7,
-    metrics: {
-      subscribers: "1M",
-      views: "500K",
-      watchTime: "3.2 min",
-    },
-    price: 3000,
-    priceModel: "per video",
-    category: "Gaming",
-    tags: ["YouTube", "Gaming", "Video"],
-  },
-  {
-    id: 7,
-    title: "Business Podcast Sponsorship",
-    description: "60-second ad spot on a business podcast with 100K weekly listeners",
-    type: "Podcast",
-    icon: MessageSquare,
-    rating: 4.6,
-    metrics: {
-      listeners: "100K",
-      downloads: "80K",
-      completion: "92%",
-    },
-    price: 1800,
-    priceModel: "per episode",
-    category: "Business",
-    tags: ["Podcast", "Business", "Audio"],
-  },
-  {
-    id: 8,
-    title: "Fashion Instagram Promotion",
-    description: "Sponsored post on a fashion Instagram account with 500K followers",
-    type: "Social Media",
-    icon: Users,
-    rating: 4.4,
-    metrics: {
-      followers: "500K",
-      engagement: "5.2%",
-      reach: "200K",
-    },
-    price: 2500,
-    priceModel: "per post",
-    category: "Fashion",
-    tags: ["Instagram", "Fashion", "Social Media"],
-  },
+    category: "Travel",
+    tags: ["Adventure", "Destinations", "Guides"],
+    avatar: "https://randomuser.me/api/portraits/men/41.jpg",
+    name: "David Kim",
+    verified: true,
+    platform: "Blog"
+  }
 ]
 
 // Categories for filtering
@@ -243,6 +239,8 @@ export default function AdSpacesPage() {
   const [favoriteAdSpaces, setFavoriteAdSpaces] = useState<Set<number>>(new Set());
   const [selectedAdSpace, setSelectedAdSpace] = useState<AdSpace | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [search, setSearch] = useState("")
+  const { theme } = useTheme()
   
   const text = "Discover Ad Spaces";
   const typingSpeed = 100;
@@ -251,9 +249,9 @@ export default function AdSpacesPage() {
   
   const taglines = [
     "Find the perfect advertising space for your brand",
-    "Connect with premium ad spaces across various platforms",
-    "Discover advertising opportunities that match your target audience",
-    "Access a curated selection of high-performing ad spaces"
+    "Connect with influential creators and platforms",
+    "Maximize your advertising ROI",
+    "Reach your target audience effectively"
   ];
 
   useEffect(() => {
@@ -290,8 +288,17 @@ export default function AdSpacesPage() {
     return () => clearTimeout(timeout);
   }, [currentIndex, isDeleting]);
 
-  // Remove the filter function and use all ad spaces directly
-  const filteredAdSpaces = adSpaces;
+  // Filter ad spaces based on search
+  const filteredAdSpaces = adSpaces.filter(space => {
+    const q = search.toLowerCase()
+    return (
+      space.title.toLowerCase().includes(q) ||
+      (space.description && space.description.toLowerCase().includes(q)) ||
+      (space.category && space.category.toLowerCase().includes(q)) ||
+      (space.tags && space.tags.some(tag => tag.toLowerCase().includes(q))) ||
+      (space.name && space.name.toLowerCase().includes(q))
+    )
+  })
 
   const toggleFavorite = (adSpaceId: number) => {
     setFavoriteAdSpaces(prev => {
@@ -315,58 +322,127 @@ export default function AdSpacesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative">
-      <VideoBackground />
-      <div className="relative z-10 bg-black/50 flex-1 flex flex-col min-h-screen">
-          <Navbar />
-        <PageContainer className="flex-1">
-            <div className="py-8">
-            <div className="relative shrink-0 flex flex-col gap-8 py-20">
-              <video 
-                className="fixed top-0 left-0 w-full h-full object-cover -z-10"
-                autoPlay
-                muted
-                loop
-                playsInline
-                disablePictureInPicture
-              >
-                <source src="/images/adspace2.mp4" type="video/mp4" />
-              </video>
-              <div className="text-center py-5">
-                <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">
-                  {displayText}
-                  <span className="animate-pulse">|</span>
-                </h1>
-                  <div className="h-20 md:h-24 flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                      <motion.p
-                        key={currentTaglineIndex}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.5 }}
-                        className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-medium"
-                      >
-                        {taglines[currentTaglineIndex]}
-                      </motion.p>
-                    </AnimatePresence>
-                  </div>
-                  </div>
-                </div>
+    <div className="min-h-screen">
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundImage: "url('/images/adspace.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: 0,
+        }}
+        aria-hidden="true"
+      />
+      <Navbar />
+      <div className="relative z-10">
+        <div className="py-20">
+          <div className="text-center py-5">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">
+              {displayText}
+              <span className="animate-pulse">|</span>
+            </h1>
+            <div className="h-20 md:h-24 flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={currentTaglineIndex}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-medium"
+                >
+                  {taglines[currentTaglineIndex]}
+                </motion.p>
+              </AnimatePresence>
+            </div>
+          </div>
 
-            {/* Ad Spaces Grid */}
-            <div className="w-full max-w-4xl mx-auto">
-              <div className="min-h-[500px] flex flex-col justify-center border border-dashed rounded-lg space-y-4">
-                <div className="p-2">
-                  <ThreeDPhotoCarousel cards={filteredAdSpaces} />
-                </div>
+          {/* Search bar */}
+          <div className="flex justify-center mb-8">
+            <Input
+              type="text"
+              placeholder="Search ad spaces..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full max-w-md rounded-lg border border-gray-300 bg-white/90 text-gray-900 placeholder-gray-500 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          {/* Ad Spaces Grid */}
+          <div className="w-full max-w-7xl mx-auto">
+            <div className="min-h-[500px] flex flex-col justify-center border border-dashed rounded-lg space-y-4">
+              <div className="p-2">
+                {/* Example: List filtered ad spaces */}
+                {filteredAdSpaces.length === 0 ? (
+                  <div className="text-center text-gray-400 py-20">No ad spaces found.</div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredAdSpaces.map(space => (
+                      <div
+                        key={space.id}
+                        style={{
+                          background: theme === 'dark' ? 'rgba(24, 24, 32, 0.92)' : 'rgba(255, 255, 255, 0.95)',
+                          color: theme === 'dark' ? '#f3f3f3' : '#333',
+                          borderRadius: "1rem",
+                          boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+                          padding: "1.5rem",
+                          backdropFilter: "blur(2px)",
+                          border: theme === 'dark' ? "1px solid #222" : "1px solid #eee",
+                          transition: "all 0.2s ease-in-out"
+                        }}
+                        className="relative"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          {space.avatar && (
+                            <img src={space.avatar} alt={space.name || space.title} className="w-10 h-10 rounded-full border border-primary/20" />
+                          )}
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-gray-900">{space.name || 'Anonymous'}</span>
+                              {space.verified && (
+                                <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded">Verified</span>
+                              )}
+                            </div>
+                            <span className="text-xs text-gray-500">Posted an ad</span>
+                          </div>
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">{space.title}</h3>
+                        <p className="text-gray-600 mb-2">{space.description}</p>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-xs">{space.type}</span>
+                          <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-xs">{space.category}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {space.tags && space.tags.map(tag => (
+                            <span key={tag} className="bg-primary/10 text-primary px-2 py-1 rounded text-xs">{tag}</span>
+                          ))}
+                        </div>
+                        <div className="mb-2">
+                          <span className="text-primary font-bold text-lg">${space.price}</span>
+                          <span className="text-xs font-normal text-gray-500 ml-1">{space.priceModel}</span>
+                        </div>
+                        <div className="mb-2">
+                          <span className="font-semibold text-gray-700">Metrics:</span>
+                          <ul className="ml-4 mt-1 list-disc text-xs text-gray-600">
+                            {Object.entries(space.metrics).map(([key, value]) => (
+                              <li key={key}><span className="capitalize font-medium">{key.replace(/([A-Z])/g, ' $1').trim()}:</span> {value}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </PageContainer>
-        <div className="mt-auto">
-          <Footer />
         </div>
+      </div>
+      <div className="mt-auto">
+        <Footer />
       </div>
 
       <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>

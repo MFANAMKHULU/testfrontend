@@ -44,7 +44,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
     "ai": "^4.2.6",
-    "autoprefixer": "^10.4.17",
+    "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
@@ -75,11 +75,11 @@
     "@types/node": "^20.11.16",
     "@types/react": "^18.2.52",
     "@types/react-dom": "^18.2.18",
-    "postcss": "^8.4.33",
+    "postcss": "^8.5.3",
     "postcss-import": "^16.1.0",
     "postcss-preset-env": "^10.1.5",
     "sharp": "^0.33.5",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.3.3"
   }
 }

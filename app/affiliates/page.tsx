@@ -175,6 +175,8 @@ const affiliates = [
   },
 ]
 
+type Affiliate = typeof affiliates[number];
+
 // Categories for filtering
 const categories = [
   "All Categories",
@@ -215,7 +217,7 @@ export default function AffiliatesPage() {
   }, []);
 
   useEffect(() => {
-    let timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && currentIndex < text.length) {
       // Typing
@@ -249,9 +251,9 @@ export default function AffiliatesPage() {
   const [commissionRange, setCommissionRange] = useState([0, 30])
   const [filteredAffiliates, setFilteredAffiliates] = useState(affiliates)
   const [showFilters, setShowFilters] = useState(false)
-  const [expandedCard, setExpandedCard] = useState(null);
-  const [favoriteAffiliates, setFavoriteAffiliates] = useState(new Set());
-  const [selectedAffiliate, setSelectedAffiliate] = useState(null);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [favoriteAffiliates, setFavoriteAffiliates] = useState<Set<number>>(new Set());
+  const [selectedAffiliate, setSelectedAffiliate] = useState<Affiliate | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const applyFilters = () => {
@@ -281,7 +283,7 @@ export default function AffiliatesPage() {
     setFilteredAffiliates(filtered)
   }
 
-  const toggleFavorite = (affiliateId) => {
+  const toggleFavorite = (affiliateId: number) => {
     setFavoriteAffiliates(prev => {
       const newFavorites = new Set(prev);
       if (newFavorites.has(affiliateId)) {
@@ -293,33 +295,35 @@ export default function AffiliatesPage() {
     });
   };
 
-  const toggleExpand = (affiliateId) => {
+  const toggleExpand = (affiliateId: number) => {
     setExpandedCard(expandedCard === affiliateId ? null : affiliateId);
   };
 
-  const handleViewProfile = (affiliate) => {
+  const handleViewProfile = (affiliate: Affiliate) => {
     setSelectedAffiliate(affiliate);
     setIsProfileOpen(true);
   };
 
   return (
     <div className="min-h-screen flex flex-col relative">
-      <VideoBackground />
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundImage: "url('/images/adspace.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: 0,
+        }}
+        aria-hidden="true"
+      />
       <div className="relative z-10 bg-black/50 flex-1 flex flex-col min-h-screen">
         <Navbar />
         <PageContainer className="flex-1">
           <div className="py-8">
             <div className="relative shrink-0 flex flex-col gap-8 py-20">
-              <video 
-                className="fixed top-0 left-0 w-full h-full object-cover -z-10"
-                autoPlay
-                muted
-                loop
-                playsInline
-                disablePictureInPicture
-              >
-                <source src="/images/affiliate.mp4" type="video/mp4" />
-              </video>
               <div className="text-center py-5">
                 <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">
                   {displayText}

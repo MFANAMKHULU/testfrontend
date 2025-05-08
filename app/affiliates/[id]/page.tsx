@@ -127,6 +127,19 @@ const affiliate = {
 export default function AffiliateDetailPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen flex flex-col">
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundImage: "url('/images/adspace.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          zIndex: 0,
+        }}
+        aria-hidden="true"
+      />
       <Navbar />
       <main className="flex-1">
         <div className="container py-8">
