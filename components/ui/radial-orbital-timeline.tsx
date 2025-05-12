@@ -4,6 +4,7 @@ import { ArrowRight, Link, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
 
 interface TimelineItem {
   id: number;
@@ -149,7 +150,7 @@ export default function RadialOrbitalTimeline({
 
   return (
     <div
-      className="w-full h-screen flex flex-col items-center justify-center bg-black overflow-hidden"
+      className="w-full h-[70vh] flex flex-col items-center overflow-hidden"
       ref={containerRef}
       onClick={handleContainerClick}
     >
@@ -168,7 +169,15 @@ export default function RadialOrbitalTimeline({
               className="absolute w-24 h-24 rounded-full border border-white/10 animate-ping opacity-50"
               style={{ animationDelay: "0.5s" }}
             ></div>
-            <div className="w-8 h-8 rounded-full bg-white/80 backdrop-blur-md"></div>
+            <div className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center">
+              <Image
+                src="/images/Picture1.png"
+                alt="Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+            </div>
           </div>
 
           <div className="absolute w-96 h-96 rounded-full border border-white/10"></div>
@@ -212,7 +221,7 @@ export default function RadialOrbitalTimeline({
 
                 <div
                   className={`
-                  w-10 h-10 rounded-full flex items-center justify-center
+                  w-14 h-14 rounded-full flex items-center justify-center
                   ${
                     isExpanded
                       ? "bg-white text-black"
@@ -232,27 +241,37 @@ export default function RadialOrbitalTimeline({
                   ${isExpanded ? "scale-150" : ""}
                 `}
                 >
-                  <Icon size={16} />
+                  <Icon size={24} />
                 </div>
 
                 <div
                   className={`
-                  absolute top-12  whitespace-nowrap
-                  text-xs font-semibold tracking-wider
+                  absolute top-16 whitespace-nowrap
+                  text-base font-semibold tracking-wider
                   transition-all duration-300
                   ${isExpanded ? "text-white scale-125" : "text-white/70"}
                 `}
                 >
                   {item.title}
                 </div>
+                <div
+                  className={`
+                  absolute top-28 whitespace-nowrap
+                  text-sm font-medium tracking-wider
+                  transition-all duration-300
+                  ${isExpanded ? "text-white scale-110" : "text-white/50"}
+                `}
+                >
+                  Step {index + 1}
+                </div>
 
                 {isExpanded && (
-                  <Card className="absolute top-20 left-1/2 -translate-x-1/2 w-64 bg-black/90 backdrop-blur-lg border-white/30 shadow-xl shadow-white/10 overflow-visible">
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-white/50"></div>
+                  <Card className="absolute top-32 left-1/2 -translate-x-1/2 w-80 bg-white border border-gray-200 shadow-lg rounded-lg overflow-visible">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-px h-3 bg-gray-200"></div>
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-center">
                         <Badge
-                          className={`px-2 text-xs ${getStatusStyles(
+                          className={`px-2 text-sm ${getStatusStyles(
                             item.status
                           )}`}
                         >
@@ -262,26 +281,26 @@ export default function RadialOrbitalTimeline({
                             ? "IN PROGRESS"
                             : "PENDING"}
                         </Badge>
-                        <span className="text-xs font-mono text-white/50">
+                        <span className="text-sm font-mono text-gray-500">
                           {item.date}
                         </span>
                       </div>
-                      <CardTitle className="text-sm mt-2">
+                      <CardTitle className="text-xl mt-2 font-bold text-gray-900">
                         {item.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="text-xs text-white/80">
+                    <CardContent className="text-base text-gray-700">
                       <p>{item.content}</p>
 
-                      <div className="mt-4 pt-3 border-t border-white/10">
-                        <div className="flex justify-between items-center text-xs mb-1">
-                          <span className="flex items-center">
-                            <Zap size={10} className="mr-1" />
+                      <div className="mt-4 pt-3 border-t border-gray-200">
+                        <div className="flex justify-between items-center text-base mb-1">
+                          <span className="flex items-center text-gray-700">
+                            <Zap size={16} className="mr-1" />
                             Energy Level
                           </span>
-                          <span className="font-mono">{item.energy}%</span>
+                          <span className="font-mono text-gray-700">{item.energy}%</span>
                         </div>
-                        <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
                             style={{ width: `${item.energy}%` }}
@@ -290,10 +309,10 @@ export default function RadialOrbitalTimeline({
                       </div>
 
                       {item.relatedIds.length > 0 && (
-                        <div className="mt-4 pt-3 border-t border-white/10">
+                        <div className="mt-4 pt-3 border-t border-gray-200">
                           <div className="flex items-center mb-2">
-                            <Link size={10} className="text-white/70 mr-1" />
-                            <h4 className="text-xs uppercase tracking-wider font-medium text-white/70">
+                            <Link size={16} className="text-gray-500 mr-1" />
+                            <h4 className="text-base uppercase tracking-wider font-medium text-gray-500">
                               Connected Nodes
                             </h4>
                           </div>
@@ -307,7 +326,7 @@ export default function RadialOrbitalTimeline({
                                   key={relatedId}
                                   variant="outline"
                                   size="sm"
-                                  className="flex items-center h-6 px-2 py-0 text-xs rounded-none border-white/20 bg-transparent hover:bg-white/10 text-white/80 hover:text-white transition-all"
+                                  className="flex items-center h-8 px-3 py-0 text-base rounded-none border-gray-200 bg-transparent hover:bg-gray-50 text-gray-700 hover:text-gray-900 transition-all"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     toggleItem(relatedId);
@@ -315,8 +334,8 @@ export default function RadialOrbitalTimeline({
                                 >
                                   {relatedItem?.title}
                                   <ArrowRight
-                                    size={8}
-                                    className="ml-1 text-white/60"
+                                    size={14}
+                                    className="ml-1 text-gray-500"
                                   />
                                 </Button>
                               );

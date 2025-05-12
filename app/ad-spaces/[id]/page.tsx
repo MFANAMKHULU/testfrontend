@@ -459,8 +459,9 @@ export default function AdSpaceDetailPage({ params }: { params: { id: string } }
             </div>
           </div>
         </div>
+        <Footer />
       </main>
-      <Footer />
+     
     </div>
   )
 }
