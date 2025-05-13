@@ -322,7 +322,7 @@ export default function AdSpacesPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <div
         style={{
           position: "fixed",
@@ -337,8 +337,8 @@ export default function AdSpacesPage() {
         aria-hidden="true"
       />
       <Navbar />
-      <div className="relative z-10">
-        <div className="py-20">
+      <main className="flex-1 relative z-10">
+        <div className="container py-12">
           <div className="text-center py-5">
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">
               {displayText}
@@ -440,8 +440,8 @@ export default function AdSpacesPage() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="mt-auto">
+      </main>
+      <div className="relative z-10">
         <Footer />
       </div>
 

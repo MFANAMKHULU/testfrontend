@@ -6,6 +6,9 @@ import { useTheme } from "next-themes"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Instagram, Youtube, Twitter, Globe, Users, Star, TrendingUp, Calendar, Check, Twitch, Award, Target, DollarSign, Clock, Heart, MessageSquare, Share2, Zap, Trophy, TrendingUp as TrendingUpIcon } from "lucide-react"
+import { Footer } from "@/components/footer"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 const influencers = [
   {
@@ -139,6 +142,8 @@ const influencers = [
 export default function InfluencersPage() {
   const { theme } = useTheme()
   const [search, setSearch] = useState("")
+  const [selectedInfluencer, setSelectedInfluencer] = useState<typeof influencers[0] | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   
   const filteredInfluencers = influencers.filter(influencer => {
     const searchTerm = search.toLowerCase()
@@ -150,9 +155,14 @@ export default function InfluencersPage() {
       (influencer.topBrands?.some(brand => brand.toLowerCase().includes(searchTerm)) ?? false)
     )
   })
+
+  const handleViewMore = (influencer: typeof influencers[0]) => {
+    setSelectedInfluencer(influencer)
+    setIsModalOpen(true)
+  }
   
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <div
         style={{
           position: "fixed",
@@ -167,281 +177,305 @@ export default function InfluencersPage() {
         aria-hidden="true"
       />
       <Navbar />
-      <div style={{
-        position: "relative",
-        zIndex: 10,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "2rem",
-        marginTop: "6rem",
-        padding: "2rem"
-      }}>
-        <Input
-          type="text"
-          placeholder="Search influencers by name, category, or brand..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          style={{
-            width: "100%",
-            maxWidth: "600px",
-            background: theme === 'dark' ? 'rgba(24, 24, 32, 0.92)' : 'rgba(255, 255, 255, 0.95)',
-            color: theme === 'dark' ? '#f3f3f3' : '#333',
-            border: theme === 'dark' ? "1px solid #222" : "1px solid #eee",
-            backdropFilter: "blur(2px)",
-            transition: "all 0.2s ease-in-out"
-          }}
-        />
-        <div style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "2rem",
-        }}>
-          {filteredInfluencers.map((influencer) => (
-            <div
-              key={influencer.handle}
-              style={{
-                background: theme === 'dark' ? 'rgba(24, 24, 32, 0.92)' : 'rgba(255, 255, 255, 0.95)',
-                color: theme === 'dark' ? '#f3f3f3' : '#333',
-                borderRadius: "1rem",
-                boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
-                padding: "2rem",
-                minWidth: "320px",
-                maxWidth: "380px",
-                textAlign: "center",
-                backdropFilter: "blur(2px)",
-                border: theme === 'dark' ? "1px solid #222" : "1px solid #eee",
-                transition: "all 0.2s ease-in-out"
-              }}
-              className="influencer-card"
-            >
-              <div style={{ position: "relative", display: "inline-block" }}>
-                <img
-                  src={influencer.avatar}
-                  alt={influencer.name}
-                  style={{
-                    width: 100,
-                    height: 100,
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    marginBottom: "1rem",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-                    border: "3px solid " + (theme === 'dark' ? '#4f46e5' : '#4f46e5')
-                  }}
-                />
-                {influencer.verified && (
-                  <div style={{
-                    position: "absolute",
-                    bottom: "1rem",
-                    right: "0",
-                    background: "#4f46e5",
-                    borderRadius: "50%",
-                    padding: "0.25rem",
-                    color: "white"
-                  }}>
-                    <Check size={16} />
-                  </div>
-                )}
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                <h3 style={{ margin: 0, fontWeight: 700, color: theme === 'dark' ? '#f3f3f3' : '#333' }}>{influencer.name}</h3>
-                {(influencer.achievements?.length ?? 0) > 0 && (
-                  <div style={{ display: "flex", gap: "0.25rem" }}>
-                    <Award size={16} style={{ color: "#fbbf24" }} />
-                    <Trophy size={16} style={{ color: "#fbbf24" }} />
-                  </div>
-                )}
-              </div>
-
-              <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.95rem", marginBottom: "0.5rem" }}>
-                {influencer.handle}
-              </div>
-
-              <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontSize: "1rem", marginBottom: "1rem" }}>
-                {influencer.description}
-              </div>
-
-              <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Followers</div>
-                  <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontWeight: 600 }}>{influencer.followers}</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Engagement</div>
-                  <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontWeight: 600 }}>{influencer.engagement}</div>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Growth</div>
-                  <div style={{ color: "#22c55e", fontWeight: 600 }}>{influencer.growth}</div>
-                </div>
-              </div>
-
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginBottom: "1rem" }}>
-                {influencer.categories.map((category) => (
-                  <Badge
-                    key={category}
+      <main className="flex-1 relative z-10">
+        <div className="container py-12">
+          <div className="text-center py-5">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Find the Perfect Influencer
+            </h1>
+            <p className="text-xl text-gray-300 mb-8">
+              Connect with verified influencers who can help grow your brand
+            </p>
+            <div className="max-w-2xl mx-auto">
+              <Input
+                type="search"
+                placeholder="Search influencers by name, category, or platform..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full"
+              />
+            </div>
+          </div>
+          
+          <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "2rem",
+          }}>
+            {filteredInfluencers.map((influencer) => (
+              <div
+                key={influencer.handle}
+                style={{
+                  background: theme === 'dark' ? 'rgba(24, 24, 32, 0.92)' : 'rgba(255, 255, 255, 0.95)',
+                  color: theme === 'dark' ? '#f3f3f3' : '#333',
+                  borderRadius: "1rem",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
+                  padding: "2rem",
+                  minWidth: "320px",
+                  maxWidth: "380px",
+                  textAlign: "center",
+                  backdropFilter: "blur(2px)",
+                  border: theme === 'dark' ? "1px solid #222" : "1px solid #eee",
+                  transition: "all 0.2s ease-in-out"
+                }}
+                className="influencer-card"
+              >
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <img
+                    src={influencer.avatar}
+                    alt={influencer.name}
                     style={{
-                      background: theme === 'dark' ? 'rgba(79, 70, 229, 0.2)' : 'rgba(79, 70, 229, 0.1)',
-                      color: theme === 'dark' ? '#a5b4fc' : '#4f46e5',
-                      border: "none",
-                      padding: "0.25rem 0.75rem",
-                      borderRadius: "1rem",
-                      fontSize: "0.8rem"
+                      width: 100,
+                      height: 100,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginBottom: "1rem",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
+                      border: "3px solid " + (theme === 'dark' ? '#4f46e5' : '#4f46e5')
                     }}
-                  >
-                    {category}
-                  </Badge>
-                ))}
-              </div>
+                  />
+                  {influencer.verified && (
+                    <div style={{
+                      position: "absolute",
+                      bottom: "1rem",
+                      right: "0",
+                      background: "#4f46e5",
+                      borderRadius: "50%",
+                      padding: "0.25rem",
+                      color: "white"
+                    }}>
+                      <Check size={16} />
+                    </div>
+                  )}
+                </div>
 
-              <div style={{ 
-                background: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                borderRadius: "0.75rem",
-                padding: "1rem",
-                marginBottom: "1rem"
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>
-                    <DollarSign size={14} />
-                    <span>Rate: {influencer.collaborationRate}</span>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                  <h3 style={{ margin: 0, fontWeight: 700, color: theme === 'dark' ? '#f3f3f3' : '#333' }}>{influencer.name}</h3>
+                  {(influencer.achievements?.length ?? 0) > 0 && (
+                    <div style={{ display: "flex", gap: "0.25rem" }}>
+                      <Award size={16} style={{ color: "#fbbf24" }} />
+                      <Trophy size={16} style={{ color: "#fbbf24" }} />
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.95rem", marginBottom: "0.5rem" }}>
+                  {influencer.handle}
+                </div>
+
+                <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontSize: "1rem", marginBottom: "1rem" }}>
+                  {influencer.description}
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Followers</div>
+                    <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontWeight: 600 }}>{influencer.followers}</div>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>
-                    <Clock size={14} />
-                    <span>{influencer.responseTime}</span>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Engagement</div>
+                    <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontWeight: 600 }}>{influencer.engagement}</div>
                   </div>
                 </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center" }}>
-                  {influencer.topBrands?.map((brand) => (
+
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginBottom: "1rem" }}>
+                  {influencer.categories.slice(0, 3).map((category) => (
                     <Badge
-                      key={brand}
+                      key={category}
                       style={{
-                        background: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                        color: theme === 'dark' ? '#f3f3f3' : '#333',
+                        background: theme === 'dark' ? 'rgba(79, 70, 229, 0.2)' : 'rgba(79, 70, 229, 0.1)',
+                        color: theme === 'dark' ? '#a5b4fc' : '#4f46e5',
                         border: "none",
                         padding: "0.25rem 0.75rem",
                         borderRadius: "1rem",
                         fontSize: "0.8rem"
                       }}
                     >
-                      {brand}
+                      {category}
                     </Badge>
                   ))}
                 </div>
-              </div>
 
-              <div style={{ 
-                background: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                borderRadius: "0.75rem",
-                padding: "1rem",
-                marginBottom: "1rem"
-              }}>
-                <div style={{ fontSize: "0.9rem", fontWeight: 600, marginBottom: "0.5rem", color: theme === 'dark' ? '#f3f3f3' : '#333' }}>
-                  Recent Campaigns
+                <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
+                  {influencer.platforms.slice(0, 3).map((platform) => {
+                    const Icon = {
+                      'YouTube': Youtube,
+                      'Instagram': Instagram,
+                      'Twitter': Twitter,
+                      'Twitch': Twitch,
+                      'TikTok': TrendingUp,
+                      'Discord': Users,
+                      'Pinterest': Globe
+                    }[platform] || Globe
+                    
+                    return (
+                      <div
+                        key={platform}
+                        style={{
+                          background: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+                          padding: "0.5rem",
+                          borderRadius: "0.5rem",
+                          color: theme === 'dark' ? '#f3f3f3' : '#333'
+                        }}
+                      >
+                        <Icon size={20} />
+                      </div>
+                    )
+                  })}
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {influencer.recentCampaigns?.map((campaign, index) => (
-                    <div key={index} style={{ 
-                      display: "flex", 
-                      justifyContent: "space-between",
-                      fontSize: "0.8rem",
-                      color: theme === 'dark' ? '#a0a0a0' : '#666'
-                    }}>
-                      <span>{campaign.name}</span>
-                      <div style={{ display: "flex", gap: "1rem" }}>
-                        <span style={{ color: "#22c55e" }}>{campaign.success}</span>
-                        <span>{campaign.reach}</span>
+
+                <Button 
+                  onClick={() => handleViewMore(influencer)}
+                  className="w-full bg-primary hover:bg-primary/90"
+                >
+                  View More
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+      <div className="relative z-10">
+        <Footer />
+      </div>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-4xl bg-background/95 backdrop-blur-sm border-gray-700">
+          {selectedInfluencer && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={selectedInfluencer.avatar}
+                    alt={selectedInfluencer.name}
+                    className="w-20 h-20 rounded-full border-2 border-primary/10"
+                  />
+                  <div>
+                    <DialogTitle className="flex items-center gap-2 text-2xl text-gray-100">
+                      {selectedInfluencer.name}
+                      {selectedInfluencer.verified && (
+                        <Badge variant="secondary" className="bg-gray-700 text-gray-200 border border-gray-600">
+                          Verified
+                        </Badge>
+                      )}
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400 text-lg">
+                      {selectedInfluencer.handle}
+                    </DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">About</h3>
+                    <p className="text-gray-400">{selectedInfluencer.description}</p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Performance Metrics</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.followers}</div>
+                        <div className="text-gray-500 text-sm">Followers</div>
+                      </div>
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.engagement}</div>
+                        <div className="text-gray-500 text-sm">Engagement Rate</div>
+                      </div>
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.avgViews}</div>
+                        <div className="text-gray-500 text-sm">Average Views</div>
+                      </div>
+                      <div className="bg-muted/50 p-4 rounded-lg">
+                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.growth}</div>
+                        <div className="text-gray-500 text-sm">Growth Rate</div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
-                {influencer.platforms.map((platform) => {
-                  const Icon = {
-                    'YouTube': Youtube,
-                    'Instagram': Instagram,
-                    'Twitter': Twitter,
-                    'Twitch': Twitch,
-                    'TikTok': TrendingUp,
-                    'Discord': Users,
-                    'Pinterest': Globe
-                  }[platform] || Globe
-                  
-                  return (
-                    <div
-                      key={platform}
-                      style={{
-                        background: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                        padding: "0.5rem",
-                        borderRadius: "0.5rem",
-                        color: theme === 'dark' ? '#f3f3f3' : '#333'
-                      }}
-                    >
-                      <Icon size={20} />
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Categories</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedInfluencer.categories.map((category) => (
+                        <Badge 
+                          key={category} 
+                          variant="secondary" 
+                          className="bg-muted/50 text-gray-300"
+                        >
+                          {category}
+                        </Badge>
+                      ))}
                     </div>
-                  )
-                })}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Collaboration Details</h3>
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <div className="text-3xl font-bold text-gray-200 mb-1">
+                        {selectedInfluencer.collaborationRate}
+                      </div>
+                      <div className="text-gray-400">Response Time: {selectedInfluencer.responseTime}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Recent Campaigns</h3>
+                    <div className="space-y-3">
+                      {selectedInfluencer.recentCampaigns?.map((campaign, index) => (
+                        <div key={index} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
+                          <span className="text-gray-300">{campaign.name}</span>
+                          <div className="flex gap-4">
+                            <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                              {campaign.success}
+                            </Badge>
+                            <span className="text-gray-400">{campaign.reach}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Audience Demographics</h3>
+                    <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                      <div className="flex justify-between text-gray-300">
+                        <span>Age Range:</span>
+                        <span>{selectedInfluencer.audienceAge}</span>
+                      </div>
+                      <div className="flex justify-between text-gray-300">
+                        <span>Gender:</span>
+                        <span>{selectedInfluencer.audienceGender}</span>
+                      </div>
+                      <div className="flex justify-between text-gray-300">
+                        <span>Top Locations:</span>
+                        <span>{selectedInfluencer.topLocations?.join(", ")}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem", marginBottom: "1rem" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                  <Calendar size={14} />
-                  <span>Joined {influencer.joinDate}</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                  <Globe size={14} />
-                  <span>{influencer.location}</span>
-                </div>
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
+                <Button 
+                  variant="outline" 
+                  className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Close
+                </Button>
+                <Button className="bg-primary hover:bg-primary/90">
+                  Start Collaboration
+                </Button>
               </div>
-
-              <div style={{ 
-                background: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                borderRadius: "0.75rem",
-                padding: "1rem",
-                marginBottom: "1rem",
-                fontSize: "0.8rem",
-                color: theme === 'dark' ? '#a0a0a0' : '#666'
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                  <span>Audience Age: {influencer.audienceAge}</span>
-                  <span>Gender: {influencer.audienceGender}</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                  <Target size={14} />
-                  <span>Top Locations: {influencer.topLocations?.join(", ") || "Not specified"}</span>
-                </div>
-              </div>
-
-              <a
-                href={influencer.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-block",
-                  marginTop: "0.5rem",
-                  padding: "0.75rem 1.5rem",
-                  background: theme === 'dark' ? '#4f46e5' : '#4f46e5',
-                  color: "#fff",
-                  borderRadius: "0.5rem",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: "0.98rem",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-                  transition: "all 0.2s ease-in-out",
-                  width: "100%"
-                }}
-                onMouseOver={e => (e.currentTarget.style.background = theme === 'dark' ? '#3730a3' : '#3730a3')}
-                onMouseOut={e => (e.currentTarget.style.background = theme === 'dark' ? '#4f46e5' : '#4f46e5')}
-              >
-                View Profile
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
