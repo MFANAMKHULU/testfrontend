@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Navbar } from "@/components/navbar"
 import { useTheme } from "next-themes"
 import { Input } from "@/components/ui/input"
@@ -9,6 +9,7 @@ import { Instagram, Youtube, Twitter, Globe, Users, Star, TrendingUp, Calendar, 
 import { Footer } from "@/components/footer"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Sparklines, SparklinesLine } from "react-sparklines"
 
 const influencers = [
   {
@@ -28,7 +29,7 @@ const influencers = [
     verified: true,
     joinDate: "Jan 2020",
     achievements: ["Top Tech Creator 2023", "Best Tech Reviews 2022"],
-    collaborationRate: "$5K - $10K",
+    collaborationRate: "R70K - R140K",
     responseTime: "< 24 hours",
     topBrands: ["Apple", "Samsung", "Sony"],
     recentCampaigns: [
@@ -57,7 +58,7 @@ const influencers = [
     verified: true,
     joinDate: "Mar 2019",
     achievements: ["Twitch Partner", "Gaming Awards 2023"],
-    collaborationRate: "$3K - $8K",
+    collaborationRate: "R42K - R112K",
     responseTime: "< 12 hours",
     topBrands: ["NVIDIA", "Razer", "Logitech"],
     recentCampaigns: [
@@ -139,26 +140,203 @@ const influencers = [
   },
 ];
 
+// AnimatedCounter for stats
+function AnimatedCounter({ value }: { value: number | string }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let start = 0;
+    const end = typeof value === 'string' ? parseInt(value.replace(/[^\d]/g, '')) : value;
+    if (isNaN(end)) return setCount(0);
+    if (end === 0) return setCount(0);
+    const duration = 1000;
+    const increment = Math.ceil(end / (duration / 16));
+    let current = start;
+    const step = () => {
+      current += increment;
+      if (current >= end) {
+        setCount(end);
+      } else {
+        setCount(current);
+        requestAnimationFrame(step);
+      }
+    };
+    step();
+  }, [value]);
+  return <span>{typeof value === 'string' && value.includes('%') ? `${count}%` : count.toLocaleString()}</span>;
+}
+
+// StarRating component
+function StarRating({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center gap-1">
+      {[...Array(5)].map((_, i) => (
+        <span key={i} className={i < Math.round(rating) ? 'text-yellow-400' : 'text-gray-300'}>★</span>
+      ))}
+      <span className="ml-1 text-xs text-gray-500">({rating.toFixed(1)})</span>
+    </div>
+  );
+}
+
+// Skeleton Loader
+function InfluencerSkeleton() {
+  return (
+    <div className="w-80 h-[480px] rounded-2xl border shadow-xl p-6 flex flex-col items-center justify-between animate-pulse bg-gray-100 dark:bg-gray-800">
+      <div className="w-24 h-24 rounded-full bg-gray-300 dark:bg-gray-700 mb-4" />
+      <div className="h-4 w-32 bg-gray-300 dark:bg-gray-700 rounded mb-2" />
+      <div className="h-3 w-20 bg-gray-200 dark:bg-gray-600 rounded mb-2" />
+      <div className="h-3 w-40 bg-gray-200 dark:bg-gray-600 rounded mb-2" />
+      <div className="flex gap-2 mb-2">
+        <div className="h-3 w-10 bg-gray-200 dark:bg-gray-600 rounded" />
+        <div className="h-3 w-10 bg-gray-200 dark:bg-gray-600 rounded" />
+      </div>
+      <div className="flex gap-2 mb-2">
+        <div className="h-3 w-12 bg-gray-200 dark:bg-gray-600 rounded" />
+        <div className="h-3 w-12 bg-gray-200 dark:bg-gray-600 rounded" />
+      </div>
+      <div className="h-10 w-full bg-gray-200 dark:bg-gray-600 rounded" />
+    </div>
+  );
+}
+
+// Collaboration Request Modal
+function CollaborationModal({ open, onClose, influencer }: any) {
+  const [form, setForm] = useState({ name: '', email: '', message: '', budget: '' });
+  const [submitted, setSubmitted] = useState(false);
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-md shadow-xl">
+        <h2 className="font-bold mb-2 text-black dark:text-white">Request Collaboration</h2>
+        {submitted ? (
+          <div className="text-green-600 dark:text-green-400">Request sent! {influencer?.name} will get back to you soon.</div>
+        ) : (
+          <form onSubmit={e => { e.preventDefault(); setSubmitted(true); onClose(); }} className="space-y-3">
+            <input className="w-full border rounded p-2 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800" placeholder="Your Name" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
+            <input className="w-full border rounded p-2 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800" placeholder="Your Email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} required />
+            <input className="w-full border rounded p-2 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800" placeholder="Budget (optional)" value={form.budget} onChange={e => setForm(f => ({ ...f, budget: e.target.value }))} />
+            <textarea className="w-full border rounded p-2 text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-800" placeholder="Message" value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} required />
+            <button type="submit" className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-2 rounded">Send Request</button>
+          </form>
+        )}
+        <button className="mt-4 text-sm text-gray-500 dark:text-gray-300" onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+// Share Buttons
+function ShareButtons({ influencer }: any) {
+  const url = encodeURIComponent(window.location.href);
+  const text = encodeURIComponent(`Check out ${influencer.name} on our platform!`);
+  return (
+    <div className="flex gap-2 mt-2">
+      <button onClick={() => window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank')} className="hover:text-cyan-500"><Twitter size={20} /></button>
+      <button onClick={() => window.open(`https://wa.me/?text=${text}%20${url}`, '_blank')} className="hover:text-green-600"><Share2 size={20} /></button>
+    </div>
+  );
+}
+
+// Comparison Modal
+function ComparisonModal({ open, onClose, influencers }: any) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-4xl shadow-xl overflow-x-auto">
+        <h2 className="font-bold mb-4 text-black dark:text-white">Compare Influencers</h2>
+        <div className="flex gap-6">
+          {influencers.map((inf: any) => (
+            <div key={inf.handle} className="w-80 rounded-2xl border shadow-xl p-6 flex flex-col items-center bg-white dark:bg-gray-900">
+              <img src={inf.avatar} alt={inf.name} className="w-20 h-20 rounded-full mb-2" />
+              <div className="font-bold text-lg mb-1">{inf.name}</div>
+              <div className="text-sm text-gray-500 mb-1">{inf.handle}</div>
+              <div className="mb-1">Followers: <AnimatedCounter value={inf.followers} /></div>
+              <div className="mb-1">Engagement: <AnimatedCounter value={inf.engagement} /></div>
+              <div className="mb-1">Avg Views: <AnimatedCounter value={inf.avgViews} /></div>
+              <div className="mb-1">Growth: {inf.growth}</div>
+              <div className="mb-1">Categories: {inf.categories.join(', ')}</div>
+              <div className="mb-1">Platforms: {inf.platforms.join(', ')}</div>
+            </div>
+          ))}
+        </div>
+        <button className="mt-4 text-sm text-gray-500 dark:text-gray-300" onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
 export default function InfluencersPage() {
   const { theme } = useTheme()
   const [search, setSearch] = useState("")
   const [selectedInfluencer, setSelectedInfluencer] = useState<typeof influencers[0] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  
-  const filteredInfluencers = influencers.filter(influencer => {
+  const [currentPage, setCurrentPage] = useState(1)
+  const cardsPerPage = 3
+  const [loading, setLoading] = useState(true)
+  const [showCollab, setShowCollab] = useState(false)
+  const [collabInfluencer, setCollabInfluencer] = useState<any>(null)
+  const [compare, setCompare] = useState<any[]>([])
+  const [showCompare, setShowCompare] = useState(false)
+  const [reviews, setReviews] = useState<{[handle: string]: {user: string, rating: number, comment: string}[]}>({})
+  const [reviewInput, setReviewInput] = useState<{user: string, rating: number, comment: string}>({user: '', rating: 5, comment: ''})
+  const [sort, setSort] = useState('followers')
+  const [filter, setFilter] = useState({ location: '', language: '', verified: '', minFollowers: '', maxFollowers: '' })
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 1200)
+  }, [])
+
+  // Advanced filtering
+  let filteredInfluencers = influencers.filter(influencer => {
     const searchTerm = search.toLowerCase()
+    const followers = parseInt((influencer.followers || '').replace(/[^\d]/g, ''))
     return (
-      influencer.name.toLowerCase().includes(searchTerm) ||
+      (influencer.name.toLowerCase().includes(searchTerm) ||
       influencer.handle.toLowerCase().includes(searchTerm) ||
       influencer.description.toLowerCase().includes(searchTerm) ||
       influencer.categories.some(cat => cat.toLowerCase().includes(searchTerm)) ||
-      (influencer.topBrands?.some(brand => brand.toLowerCase().includes(searchTerm)) ?? false)
+      (influencer.topBrands?.some(brand => brand.toLowerCase().includes(searchTerm)) ?? false)) &&
+      (!filter.location || (influencer.location && influencer.location.toLowerCase().includes(filter.location.toLowerCase()))) &&
+      (!filter.language || (influencer.languages && influencer.languages.some(l => l.toLowerCase().includes(filter.language.toLowerCase())))) &&
+      (!filter.verified || (filter.verified === 'yes' ? influencer.verified : !influencer.verified)) &&
+      (!filter.minFollowers || followers >= parseInt(filter.minFollowers)) &&
+      (!filter.maxFollowers || followers <= parseInt(filter.maxFollowers))
     )
   })
 
+  // Sorting
+  filteredInfluencers = filteredInfluencers.sort((a, b) => {
+    if (sort === 'followers') return parseInt((b.followers || '').replace(/[^\d]/g, '')) - parseInt((a.followers || '').replace(/[^\d]/g, ''))
+    if (sort === 'engagement') return parseFloat((b.engagement || '0').replace('%','')) - parseFloat((a.engagement || '0').replace('%',''))
+    return 0
+  })
+
+  const totalPages = Math.ceil(filteredInfluencers.length / cardsPerPage)
+  const paginatedInfluencers = filteredInfluencers.slice((currentPage - 1) * cardsPerPage, currentPage * cardsPerPage)
+
   const handleViewMore = (influencer: typeof influencers[0]) => {
-    setSelectedInfluencer(influencer)
-    setIsModalOpen(true)
+    setSelectedInfluencer(influencer);
+    setIsModalOpen(true);
+    setShowCollab(true);
+    setCollabInfluencer(influencer);
+  }
+
+  // Review submit
+  const handleReviewSubmit = (handle: string) => {
+    if (!reviewInput.user || !reviewInput.comment) return
+    setReviews(prev => ({
+      ...prev,
+      [handle]: [...(prev[handle] || []), { ...reviewInput }]
+    }))
+    setReviewInput({ user: '', rating: 5, comment: '' })
+  }
+
+  // Badge logic
+  const getBadges = (inf: any) => {
+    const badges = []
+    if (parseInt((inf.followers || '').replace(/[^\d]/g, '')) > 1000000) badges.push({ label: 'Top Influencer', color: 'bg-yellow-400 text-yellow-900 animate-bounce' })
+    if (inf.verified) badges.push({ label: 'Verified', color: 'bg-blue-500 text-white animate-pulse' })
+    if (parseFloat((inf.engagement || '0').replace('%','')) > 10) badges.push({ label: 'Trending', color: 'bg-pink-500 text-white animate-pulse' })
+    return badges
   }
   
   return (
@@ -186,7 +364,7 @@ export default function InfluencersPage() {
             <p className="text-xl text-gray-300 mb-8">
               Connect with verified influencers who can help grow your brand
             </p>
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto mb-4">
               <Input
                 type="search"
                 placeholder="Search influencers by name, category, or platform..."
@@ -195,109 +373,87 @@ export default function InfluencersPage() {
                 className="w-full"
               />
             </div>
+            {/* Advanced Filters */}
+            <div className="flex flex-wrap gap-2 justify-center mb-4">
+              <input className="border rounded p-1 text-xs" placeholder="Location" value={filter.location} onChange={e => setFilter(f => ({ ...f, location: e.target.value }))} />
+              <input className="border rounded p-1 text-xs" placeholder="Language" value={filter.language} onChange={e => setFilter(f => ({ ...f, language: e.target.value }))} />
+              <select className="border rounded p-1 text-xs" value={filter.verified} onChange={e => setFilter(f => ({ ...f, verified: e.target.value }))}>
+                <option value="">All</option>
+                <option value="yes">Verified</option>
+                <option value="no">Not Verified</option>
+              </select>
+              <input className="border rounded p-1 text-xs" placeholder="Min Followers" type="number" value={filter.minFollowers} onChange={e => setFilter(f => ({ ...f, minFollowers: e.target.value }))} />
+              <input className="border rounded p-1 text-xs" placeholder="Max Followers" type="number" value={filter.maxFollowers} onChange={e => setFilter(f => ({ ...f, maxFollowers: e.target.value }))} />
+              <select className="border rounded p-1 text-xs" value={sort} onChange={e => setSort(e.target.value)}>
+                <option value="followers">Sort by Followers</option>
+                <option value="engagement">Sort by Engagement</option>
+              </select>
+            </div>
           </div>
           
           <div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "2rem",
+            display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2rem'
           }}>
-            {filteredInfluencers.map((influencer) => (
+            {loading
+              ? Array.from({ length: 3 }).map((_, i) => <InfluencerSkeleton key={i} />)
+              : paginatedInfluencers.map((influencer) => (
               <div
                 key={influencer.handle}
-                style={{
-                  background: theme === 'dark' ? 'rgba(24, 24, 32, 0.92)' : 'rgba(255, 255, 255, 0.95)',
-                  color: theme === 'dark' ? '#f3f3f3' : '#333',
-                  borderRadius: "1rem",
-                  boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
-                  padding: "2rem",
-                  minWidth: "320px",
-                  maxWidth: "380px",
-                  textAlign: "center",
-                  backdropFilter: "blur(2px)",
-                  border: theme === 'dark' ? "1px solid #222" : "1px solid #eee",
-                  transition: "all 0.2s ease-in-out"
-                }}
-                className="influencer-card"
+                  className={`w-80 h-[520px] rounded-2xl border shadow-xl p-6 flex flex-col items-center justify-between transition-all duration-300 group overflow-hidden ${theme === 'dark' ? 'bg-gray-900 text-gray-100 border-gray-700' : 'bg-white text-[#222] border-gray-200'}`}
               >
-                <div style={{ position: "relative", display: "inline-block" }}>
+                  <div className="relative inline-block">
                   <img
                     src={influencer.avatar}
                     alt={influencer.name}
-                    style={{
-                      width: 100,
-                      height: 100,
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      marginBottom: "1rem",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.10)",
-                      border: "3px solid " + (theme === 'dark' ? '#4f46e5' : '#4f46e5')
-                    }}
-                  />
-                  {influencer.verified && (
-                    <div style={{
-                      position: "absolute",
-                      bottom: "1rem",
-                      right: "0",
-                      background: "#4f46e5",
-                      borderRadius: "50%",
-                      padding: "0.25rem",
-                      color: "white"
-                    }}>
-                      <Check size={16} />
+                      className="w-24 h-24 rounded-full object-cover mb-4 shadow border-4 border-indigo-600"
+                    />
+                    <div className="absolute -bottom-2 right-0 flex gap-1">
+                      {getBadges(influencer).map(b => <span key={b.label} className={`px-2 py-1 rounded-full text-xs font-bold ${b.color}`}>{b.label}</span>)}
                     </div>
-                  )}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                  <h3 style={{ margin: 0, fontWeight: 700, color: theme === 'dark' ? '#f3f3f3' : '#333' }}>{influencer.name}</h3>
+                  <div className="flex justify-center items-center gap-2 mb-2">
+                    <h3 className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{influencer.name}</h3>
                   {(influencer.achievements?.length ?? 0) > 0 && (
-                    <div style={{ display: "flex", gap: "0.25rem" }}>
-                      <Award size={16} style={{ color: "#fbbf24" }} />
-                      <Trophy size={16} style={{ color: "#fbbf24" }} />
+                      <div className="flex gap-1">
+                        <Award size={16} className="text-yellow-400 animate-bounce" />
+                        <Trophy size={16} className="text-yellow-400 animate-bounce" />
                     </div>
                   )}
                 </div>
 
-                <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.95rem", marginBottom: "0.5rem" }}>
-                  {influencer.handle}
-                </div>
+                  <div className={`text-sm mb-1 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-500'}`}>{influencer.handle}</div>
 
-                <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontSize: "1rem", marginBottom: "1rem" }}>
-                  {influencer.description}
-                </div>
+                  <div className={`mb-2 text-center ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>{influencer.description}</div>
 
-                <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Followers</div>
-                    <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontWeight: 600 }}>{influencer.followers}</div>
+                  <div className="flex justify-center gap-6 mb-2">
+                    <div className="text-center">
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Followers</div>
+                      <div className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{influencer.followers}</div>
+                </div>
+                    <div className="text-center">
+                      <div className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Engagement</div>
+                      <div className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{influencer.engagement}</div>
+                </div>
                   </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ color: theme === 'dark' ? '#a0a0a0' : '#666', fontSize: "0.8rem" }}>Engagement</div>
-                    <div style={{ color: theme === 'dark' ? '#f3f3f3' : '#333', fontWeight: 600 }}>{influencer.engagement}</div>
-                  </div>
+
+                  {/* Mini Analytics/Chart */}
+                  <div className="w-full mb-2">
+                    <Sparklines data={[10, 20, 15, 30, 25, 40, 35]} height={30}><SparklinesLine color="#06b6d4" /></Sparklines>
                 </div>
 
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center", marginBottom: "1rem" }}>
+                  <div className="flex flex-wrap gap-2 justify-center mb-2">
                   {influencer.categories.slice(0, 3).map((category) => (
                     <Badge
                       key={category}
-                      style={{
-                        background: theme === 'dark' ? 'rgba(79, 70, 229, 0.2)' : 'rgba(79, 70, 229, 0.1)',
-                        color: theme === 'dark' ? '#a5b4fc' : '#4f46e5',
-                        border: "none",
-                        padding: "0.25rem 0.75rem",
-                        borderRadius: "1rem",
-                        fontSize: "0.8rem"
-                      }}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${theme === 'dark' ? 'bg-indigo-900 text-indigo-200' : 'bg-indigo-100 text-indigo-700'}`}
                     >
                       {category}
                     </Badge>
                   ))}
                 </div>
 
-                <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "1rem" }}>
+                  <div className="flex justify-center gap-2 mb-4">
                   {influencer.platforms.slice(0, 3).map((platform) => {
                     const Icon = {
                       'YouTube': Youtube,
@@ -308,32 +464,49 @@ export default function InfluencersPage() {
                       'Discord': Users,
                       'Pinterest': Globe
                     }[platform] || Globe
-                    
                     return (
                       <div
                         key={platform}
-                        style={{
-                          background: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
-                          padding: "0.5rem",
-                          borderRadius: "0.5rem",
-                          color: theme === 'dark' ? '#f3f3f3' : '#333'
-                        }}
-                      >
-                        <Icon size={20} />
+                          className={`p-2 rounded-full ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
+                        >
+                          <Icon size={16} className={theme === 'dark' ? 'text-gray-300' : 'text-gray-700'} />
                       </div>
                     )
                   })}
                 </div>
 
-                <Button 
+                  <button
                   onClick={() => handleViewMore(influencer)}
-                  className="w-full bg-primary hover:bg-primary/90"
+                    className={`w-full py-2 rounded-lg font-semibold transition-colors ${theme === 'dark' ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-indigo-500 hover:bg-indigo-600 text-white'}`}
                 >
-                  View More
-                </Button>
+                    View Details
+                  </button>
               </div>
             ))}
           </div>
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-8">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 rounded bg-cyan-400 text-white disabled:opacity-50 hover:bg-cyan-500 transition"
+              >
+                Prev
+              </button>
+              <span className="text-black font-semibold dark:text-white">Page {currentPage} of {totalPages}</span>
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 rounded bg-cyan-400 text-white disabled:opacity-50 hover:bg-cyan-500 transition"
+              >
+                Next
+              </button>
+            </div>
+          )}
+          {/* Comparison Modal */}
+          <ComparisonModal open={showCompare && compare.length > 1} onClose={() => setShowCompare(false)} influencers={compare} />
+          {/* Collaboration Modal */}
+          <CollaborationModal open={showCollab} onClose={() => setShowCollab(false)} influencer={collabInfluencer} />
         </div>
       </main>
       <div className="relative z-10">
@@ -341,7 +514,7 @@ export default function InfluencersPage() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-4xl bg-background/95 backdrop-blur-sm border-gray-700">
+        <DialogContent className={`w-full max-w-md md:max-w-lg lg:max-w-xl max-h-[80vh] overflow-y-auto border-gray-700 p-2 md:p-6 ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-white text-[#222]'}`}>
           {selectedInfluencer && (
             <>
               <DialogHeader>
@@ -349,18 +522,18 @@ export default function InfluencersPage() {
                   <img
                     src={selectedInfluencer.avatar}
                     alt={selectedInfluencer.name}
-                    className="w-20 h-20 rounded-full border-2 border-primary/10"
+                    className="w-20 h-20 rounded-full border-2 border-indigo-200 dark:border-indigo-700"
                   />
                   <div>
-                    <DialogTitle className="flex items-center gap-2 text-2xl text-gray-100">
+                    <DialogTitle className={`flex items-center gap-2 text-2xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                       {selectedInfluencer.name}
                       {selectedInfluencer.verified && (
-                        <Badge variant="secondary" className="bg-gray-700 text-gray-200 border border-gray-600">
+                        <Badge variant="secondary" className={`ml-2 ${theme === 'dark' ? 'bg-gray-700 text-gray-200 border border-gray-600' : 'bg-gray-200 text-gray-800 border border-gray-400'}`}>
                           Verified
                         </Badge>
                       )}
                     </DialogTitle>
-                    <DialogDescription className="text-gray-400 text-lg">
+                    <DialogDescription className={`text-lg ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
                       {selectedInfluencer.handle}
                     </DialogDescription>
                   </div>
@@ -370,42 +543,41 @@ export default function InfluencersPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-200 mb-2">About</h3>
-                    <p className="text-gray-400">{selectedInfluencer.description}</p>
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>About</h3>
+                    <p className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>{selectedInfluencer.description}</p>
                   </div>
                   
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Performance Metrics</h3>
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Performance Metrics</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-muted/50 p-4 rounded-lg">
-                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.followers}</div>
-                        <div className="text-gray-500 text-sm">Followers</div>
+                      <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        <div className={`font-semibold text-xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{selectedInfluencer.followers}</div>
+                        <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Followers</div>
                       </div>
-                      <div className="bg-muted/50 p-4 rounded-lg">
-                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.engagement}</div>
-                        <div className="text-gray-500 text-sm">Engagement Rate</div>
+                      <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        <div className={`font-semibold text-xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{selectedInfluencer.engagement}</div>
+                        <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Engagement Rate</div>
                       </div>
-                      <div className="bg-muted/50 p-4 rounded-lg">
-                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.avgViews}</div>
-                        <div className="text-gray-500 text-sm">Average Views</div>
+                      <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        <div className={`font-semibold text-xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{selectedInfluencer.avgViews}</div>
+                        <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Average Views</div>
                       </div>
-                      <div className="bg-muted/50 p-4 rounded-lg">
-                        <div className="text-gray-200 font-semibold text-xl">{selectedInfluencer.growth}</div>
-                        <div className="text-gray-500 text-sm">Growth Rate</div>
+                      <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        <div className={`font-semibold text-xl ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{selectedInfluencer.growth}</div>
+                        <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Growth Rate</div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Categories</h3>
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Categories</h3>
                     <div className="flex flex-wrap gap-2">
-                      {selectedInfluencer.categories.map((category) => (
+                      {selectedInfluencer.categories.map((cat) => (
                         <Badge 
-                          key={category} 
-                          variant="secondary" 
-                          className="bg-muted/50 text-gray-300"
+                          key={cat}
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${theme === 'dark' ? 'bg-indigo-900 text-indigo-200' : 'bg-indigo-100 text-indigo-700'}`}
                         >
-                          {category}
+                          {cat}
                         </Badge>
                       ))}
                     </div>
@@ -414,26 +586,42 @@ export default function InfluencersPage() {
 
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Collaboration Details</h3>
-                    <div className="bg-muted/50 p-4 rounded-lg">
-                      <div className="text-3xl font-bold text-gray-200 mb-1">
-                        {selectedInfluencer.collaborationRate}
-                      </div>
-                      <div className="text-gray-400">Response Time: {selectedInfluencer.responseTime}</div>
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Reviews & Ratings</h3>
+                    <div className="space-y-2 mb-4 max-h-32 overflow-y-auto">
+                      {(reviews[selectedInfluencer.handle] || []).length === 0 && (<div className="text-gray-500">No reviews yet. Be the first to comment!</div>)}
+                      {(reviews[selectedInfluencer.handle] || []).map((r, idx) => (<div key={idx} className="bg-gray-100 dark:bg-gray-800 rounded p-2 text-gray-900 dark:text-gray-100"><span className="font-bold text-cyan-700 dark:text-cyan-300">{r.user}:</span> <StarRating rating={r.rating} /> {r.comment}</div>))}
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <input type="text" placeholder="Your name" value={reviewInput.user} onChange={e => setReviewInput({ ...reviewInput, user: e.target.value })} className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-400 dark:border-gray-700" />
+                      <select value={reviewInput.rating} onChange={e => setReviewInput({ ...reviewInput, rating: parseInt(e.target.value) })} className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-400 dark:border-gray-700">
+                        {[5,4,3,2,1].map(n => <option key={n} value={n}>{n}★</option>)}
+                      </select>
+                      <input type="text" placeholder="Write a comment..." value={reviewInput.comment} onChange={e => setReviewInput({ ...reviewInput, comment: e.target.value })} className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-400 dark:border-gray-700 flex-1" />
+                      <button onClick={() => handleReviewSubmit(selectedInfluencer.handle)} className="bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 rounded flex items-center gap-1">Post</button>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Recent Campaigns</h3>
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Collaboration Details</h3>
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                      <div className={`text-3xl font-bold text-gray-200 mb-1 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        {selectedInfluencer.collaborationRate}
+                      </div>
+                      <div className={`text-gray-400 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Response Time: {selectedInfluencer.responseTime}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Recent Campaigns</h3>
                     <div className="space-y-3">
                       {selectedInfluencer.recentCampaigns?.map((campaign, index) => (
                         <div key={index} className="flex justify-between items-center bg-muted/50 p-3 rounded-lg">
-                          <span className="text-gray-300">{campaign.name}</span>
+                          <span className={`text-gray-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{campaign.name}</span>
                           <div className="flex gap-4">
-                            <Badge variant="secondary" className="bg-green-500/20 text-green-400">
+                            <Badge variant="secondary" className={`bg-green-500/20 text-green-400 ${theme === 'dark' ? 'bg-green-800' : 'bg-green-200'}`}>
                               {campaign.success}
                             </Badge>
-                            <span className="text-gray-400">{campaign.reach}</span>
+                            <span className={`text-gray-400 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{campaign.reach}</span>
                           </div>
                         </div>
                       ))}
@@ -441,8 +629,8 @@ export default function InfluencersPage() {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-200 mb-2">Audience Demographics</h3>
-                    <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                    <h3 className={`text-lg font-semibold mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Audience Demographics</h3>
+                    <div className={`p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} space-y-2`}>
                       <div className="flex justify-between text-gray-300">
                         <span>Age Range:</span>
                         <span>{selectedInfluencer.audienceAge}</span>
@@ -463,12 +651,19 @@ export default function InfluencersPage() {
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
                 <Button 
                   variant="outline" 
-                  className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100"
+                  className={`border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-gray-100 ${theme === 'dark' ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-gray-800'}`}
                   onClick={() => setIsModalOpen(false)}
                 >
                   Close
                 </Button>
-                <Button className="bg-primary hover:bg-primary/90">
+                <Button
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setShowCollab(true);
+                    setCollabInfluencer(selectedInfluencer);
+                  }}
+                >
                   Start Collaboration
                 </Button>
               </div>
@@ -476,6 +671,10 @@ export default function InfluencersPage() {
           )}
         </DialogContent>
       </Dialog>
+      {/* Compare Button */}
+      {compare.length > 1 && (
+        <button className="fixed bottom-8 right-8 z-50 bg-cyan-500 text-white px-6 py-3 rounded-full shadow-lg" onClick={() => setShowCompare(true)}>Compare ({compare.length})</button>
+      )}
     </div>
   );
 }
