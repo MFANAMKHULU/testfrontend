@@ -19,6 +19,7 @@ interface NavBarProps {
   className?: string
   onSignIn?: () => void
   onSignUp?: () => void
+  rightContent?: React.ReactNode
 }
 
 // Update the keyframes animation
@@ -45,7 +46,7 @@ const keyframes = `
   }
 `
 
-export function NavBar({ items, className, onSignIn, onSignUp }: NavBarProps) {
+export function NavBar({ items, className, onSignIn, onSignUp, rightContent }: NavBarProps) {
   const [activeTab, setActiveTab] = useState(items[0].name)
   const [isMobile, setIsMobile] = useState(false)
   const [colorIndex, setColorIndex] = useState(0)
@@ -154,7 +155,7 @@ export function NavBar({ items, className, onSignIn, onSignUp }: NavBarProps) {
                 href={item.url}
                 onClick={() => setActiveTab(item.name)}
                 className={cn(
-                  "relative cursor-pointer text-base font-medium transition-colors px-3",
+                  "relative cursor-pointer text-lg font-bold text-white transition-colors px-3",
                   "hover:text-[#00b8ff]",
                   "relative group"
                 )}
@@ -189,6 +190,7 @@ export function NavBar({ items, className, onSignIn, onSignUp }: NavBarProps) {
         
         {/* Auth Buttons */}
         <div className="flex items-center gap-2">
+          {rightContent}
           <AnimatedButton
             variant="ghost-primary"
             className={cn(
@@ -204,22 +206,18 @@ export function NavBar({ items, className, onSignIn, onSignUp }: NavBarProps) {
           <Link
             href="/signup"
             className={cn(
-              "relative group px-4 py-2 rounded-lg text-sm font-medium",
-              "text-white shadow-lg",
+              "relative group px-6 py-3 rounded-xl text-lg font-extrabold text-white",
+              "shadow-2xl border-2 border-[#53E2D2] bg-gradient-to-r from-[#53E2D2] to-[#9575ff]",
               "animate-[flash_2.5s_ease-in-out_infinite,flicker_2s_linear_infinite]",
-              "hover:scale-105 hover:shadow-xl",
-              "border border-white/20",
-              "overflow-hidden",
-              "bg-gradient-to-r from-[#00b8ff] to-[#ffa500]"
+              "hover:scale-105 hover:shadow-2xl hover:border-[#9575ff]",
+              "overflow-hidden"
             )}
             style={{
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textShadow: "0 0 10px rgba(0,184,255,0.5), 0 0 20px rgba(255,165,0,0.3)"
+              textShadow: "0 0 20px #53E2D2, 0 0 40px #9575ff"
             }}
           >
             Get Started
-            <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-[#00b8ff] to-[#ffa500] opacity-0 group-hover:opacity-20 transition-opacity" />
+            <span className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#53E2D2] to-[#9575ff] opacity-20 group-hover:opacity-40 transition-opacity" />
           </Link>
         </div>
       </div>

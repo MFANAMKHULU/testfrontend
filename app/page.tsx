@@ -2,7 +2,6 @@
 
 import { HowItWorks } from "@/components/how-it-works"
 import { FeaturedSpaces } from "@/components/featured-spaces"
-import { Testimonials } from "@/components/testimonials"
 import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
 import { AnimatedContent } from "@/components/animated-content"
@@ -15,14 +14,13 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { CustomCursor } from "@/components/custom-cursor"
 import { useState, useEffect } from "react"
-import { FeaturedAdSpaces } from "@/components/featured-ad-spaces"
 import { Hero } from "@/components/hero"
 import { CTA } from "@/components/cta"
 import { VideoBackground } from "@/components/ui/video-background"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { ShuffleCards } from "@/components/ui/testimonial-cards"
 
 export default function Home() {
-  // Define the rotating text options
   const industryTypes = [
     "Digital Advertising",
     "Social Media Marketing",
@@ -36,36 +34,20 @@ export default function Home() {
     "Network",
     "Ecosystem"
   ]
-
-  const taglines = [
-    "Connect with top advertisers and influencers",
-    "Find the perfect ad space for your brand",
-    "Monetize your platform with premium ads",
-    "Discover innovative advertising solutions"
-  ]
   
   // State declarations
   const [currentIndustryIndex, setCurrentIndustryIndex] = useState(0)
   const [currentMarketplaceIndex, setCurrentMarketplaceIndex] = useState(0)
   const [isIndustryChanging, setIsIndustryChanging] = useState(false)
   const [isMarketplaceChanging, setIsMarketplaceChanging] = useState(false)
-  const [currentTaglineIndex, setCurrentTaglineIndex] = useState(0)
-  const [displayText, setDisplayText] = useState("")
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [showFilters, setShowFilters] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState("All Categories")
   const [priceRange, setPriceRange] = useState([0, 10000])
   const [expandedCard, setExpandedCard] = useState<number | null>(null)
   const [favoriteAdSpaces, setFavoriteAdSpaces] = useState<Set<number>>(new Set())
-  const [selectedAdSpace, setSelectedAdSpace] = useState<AdSpace | null>(null)
+  const [selectedAdSpace, setSelectedAdSpace] = useState<number | null>(null)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
-  
-  const text = "Discover Ad Spaces"
-  const typingSpeed = 100
-  const deletingSpeed = 50
-  const pauseTime = 2000
 
   // Effect to cycle through industry types
   useEffect(() => {
@@ -94,50 +76,14 @@ export default function Home() {
     return () => clearInterval(marketplaceInterval)
   }, [])
 
-  // Effect to cycle through taglines
-  useEffect(() => {
-    const taglineInterval = setInterval(() => {
-      setCurrentTaglineIndex((prevIndex) => (prevIndex + 1) % taglines.length)
-    }, 5000) // Change every 5 seconds
-    
-    return () => clearInterval(taglineInterval)
-  }, [])
-
-  // Effect for typing animation
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-
-    if (!isDeleting && currentIndex < text.length) {
-      timeout = setTimeout(() => {
-        setDisplayText(text.substring(0, currentIndex + 1));
-        setCurrentIndex(currentIndex + 1);
-      }, typingSpeed);
-    } else if (isDeleting && currentIndex > 0) {
-      timeout = setTimeout(() => {
-        setDisplayText(text.substring(0, currentIndex - 1));
-        setCurrentIndex(currentIndex - 1);
-      }, deletingSpeed);
-    } else if (!isDeleting && currentIndex === text.length) {
-      timeout = setTimeout(() => {
-        setIsDeleting(true);
-      }, pauseTime);
-    } else if (isDeleting && currentIndex === 0) {
-      timeout = setTimeout(() => {
-        setIsDeleting(false);
-      }, pauseTime);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [currentIndex, isDeleting]);
-
   return (
     <div className="min-h-screen flex flex-col relative">
       <VideoBackground />
       <div className="relative z-10 bg-black/50 flex-1 flex flex-col min-h-screen">
         <Navbar />
         <PageContainer className="flex-1">
-          <div className="py-8">
-            <div className="relative shrink-0 flex flex-col gap-8 py-20">
+          <div className="py-2">
+            <div className="relative shrink-0 flex flex-col gap-2 py-4">
               <video 
                 className="fixed top-0 left-0 w-full h-full object-cover -z-10"
                 autoPlay
@@ -146,32 +92,14 @@ export default function Home() {
                 playsInline
                 disablePictureInPicture
               >
-                <source src="/images/thunder.mp4" type="video/mp4" />
+                <source src="/images/newbg.mp4" type="video/mp4" />
               </video>
-              <div className="text-center py-5">
-                <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 min-h-[72px]">
-                  {displayText}
-                  <span className="animate-pulse">|</span>
-                </h1>
-                <div className="h-20 md:h-24 flex items-center justify-center">
-                  <AnimatePresence mode="wait">
-                    <motion.p
-                      key={currentTaglineIndex}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.5 }}
-                      className="text-lg md:text-xl text-white/80 max-w-3xl mx-auto font-medium"
-                    >
-                      {taglines[currentTaglineIndex]}
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
+              <div className="text-center py-1">
               </div>
             </div>
 
             <AnimatedContent>
-              <div className="container-narrow relative z-10 py-4 md:py-8">
+              <div className="container-narrow relative z-10 py-2 md:py-4">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -340,37 +268,25 @@ export default function Home() {
                     </div>
                   </motion.div>
                 </motion.div>
+                
               </div>
             </AnimatedContent>
 
             <AnimatedContent className="pb-0">
-              <div className="container-narrow relative z-10 py-4 md:py-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="max-w-4xl mx-auto text-center mb-8"
-                >
-                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Featured Ad Spaces</h2>
-                  <p className="text-lg text-white/80 mb-8">Discover premium advertising opportunities across various platforms</p>
-                  
-                  <FeaturedAdSpaces />
-                </motion.div>
-              </div>
-            </AnimatedContent>
-
-            <AnimatedContent className="pt-0">
               <HowItWorks />
             </AnimatedContent>
-
-            <AnimatedContent className="pb-0">
-              <Testimonials />
-            </AnimatedContent>
           </div>
+
+          <div className="my-12">
+                  <ShuffleCards />
+                </div>
+
+                <Footer />
         </PageContainer>
       </div>
-      <CTA />
-      <Footer />
+     
+     
+      
     </div>
   )
 }

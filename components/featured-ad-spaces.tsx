@@ -49,9 +49,6 @@ export function FeaturedAdSpaces() {
           >
             Featured Ad Spaces
           </motion.h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Discover premium advertising opportunities across various platforms
-          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -25,7 +25,6 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PageContainer } from "@/components/page-container"
-import { VideoBackground } from "@/components/ui/video-background"
 // This would normally come from a database
 const influencer = {
   id: 1,
@@ -127,29 +126,22 @@ const influencer = {
 export default function InfluencerDetailPage({ params }: { params: { id: string } }) {
   return (
     <div className="min-h-screen relative">
-      <VideoBackground />
+      {/* Background image as a div */}
+      <div
+        className="fixed inset-0 w-full h-full bg-cover bg-center -z-10"
+        style={{ backgroundImage: "url('/images/influencers.jpg')" }}
+        aria-hidden="true"
+      />
       <div className="relative z-10 bg-black/50">
         <Navbar />
         <PageContainer>
           <div className="py-8">
             <div className="relative shrink-0 flex flex-col gap-8 py-20">
-              <video 
-                className="w-full h-full object-cover absolute -z-10"
-                autoPlay
-                muted
-                loop
-                playsInline
-                disablePictureInPicture
-              >
-                <source src="/images/influencer.mp4" type="video/mp4" />
-              </video>
-              
               <div className="flex items-start gap-8">
                 <Avatar className="w-32 h-32">
                   <AvatarImage src={influencer.avatar} alt={influencer.name} />
                   <AvatarFallback>{influencer.name[0]}</AvatarFallback>
                 </Avatar>
-                
                 <div className="flex-1">
                   <div className="flex items-center gap-4">
                     <h1 className="text-4xl font-bold text-white">{influencer.name}</h1>
@@ -162,7 +154,6 @@ export default function InfluencerDetailPage({ params }: { params: { id: string 
                   </div>
                   <p className="text-gray-300 mt-2">{influencer.handle}</p>
                   <p className="text-gray-300 mt-4">{influencer.description}</p>
-                  
                   <div className="flex gap-4 mt-6">
                     <Button variant="outline" className="text-white">
                       <MessageSquare className="w-4 h-4 mr-2" />

@@ -6,10 +6,9 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="dark"
-      enableSystem
-      forcedTheme="dark"
-      disableTransitionOnChange={false}
+      defaultTheme="light"
+      enableSystem={false}
+      disableTransitionOnChange
       storageKey="all-things-ads-theme"
       {...props}
     >

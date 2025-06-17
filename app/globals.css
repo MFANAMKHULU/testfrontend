@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --border: #e5e7eb;
+}
+
 /* Import Calibri font */
 @font-face {
   font-family: 'Calibri';
@@ -181,9 +185,9 @@
     @apply bg-border rounded-full;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/20;
-  }
+  /* ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
+  } */
 
   /* Firefox scrollbar */
   * {
@@ -197,9 +201,9 @@
   }
 
   /* Selection styles */
-  ::selection {
+  /* ::selection {
     @apply bg-primary/20 text-primary;
-  }
+  } */
 
   /* User select */
   .user-select-none {
@@ -715,9 +719,9 @@
 }
 
 /* Consistent focus styles */
-:focus-visible {
+/* :focus-visible {
   @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
-}
+} */
 
 @layer utilities {
   @keyframes border-ball {
@@ -744,6 +748,70 @@
 
   .animate-skew-scroll {
     animation: skew-scroll 20s linear infinite;
+  }
+
+  .border-border {
+    border-color: var(--border);
+  }
+  .bg-border {
+    background-color: var(--border);
+  }
+  .text-border {
+    color: var(--border);
+  }
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+  .text-card-foreground {
+    color: hsl(var(--card-foreground));
+  }
+  .bg-popover {
+    background-color: hsl(var(--popover));
+  }
+  .text-popover-foreground {
+    color: hsl(var(--popover-foreground));
+  }
+  .bg-primary {
+    background-color: hsl(var(--primary));
+  }
+  .text-primary-foreground {
+    color: hsl(var(--primary-foreground));
+  }
+  .bg-secondary {
+    background-color: hsl(var(--secondary));
+  }
+  .text-secondary-foreground {
+    color: hsl(var(--secondary-foreground));
+  }
+  .bg-muted {
+    background-color: hsl(var(--muted));
+  }
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+  .bg-accent {
+    background-color: hsl(var(--accent));
+  }
+  .text-accent-foreground {
+    color: hsl(var(--accent-foreground));
+  }
+  .bg-destructive {
+    background-color: hsl(var(--destructive));
+  }
+  .text-destructive-foreground {
+    color: hsl(var(--destructive-foreground));
+  }
+  .bg-input {
+    background-color: hsl(var(--input));
+  }
+  .text-ring {
+    color: hsl(var(--ring));
   }
 }
 
